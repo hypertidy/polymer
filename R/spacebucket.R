@@ -41,7 +41,8 @@ spacebucket <- function(...) {
 
   index <-   map %>% dplyr::mutate(path_ = match(path_, path$path$path_))
   paths <- path[["path"]] %>% dplyr::transmute(subobject, object, ncoords_,
-                                               layer = layers[object])
+                                               layer = layers[object],
+                                               path = row_number())
 
   out <- list(input = inputs0,
        primitives = RTri,
@@ -86,10 +87,20 @@ print.spacebucket <- function(x, ...) {
 #' bucket <- spacebucket(nc, st_jitter(nc, amount = 0.1))
 #' plot(bucket)
 plot.spacebucket <- function(x, ...) {
-  plot(x$primitives$P, pch = ".")
+  plot(x$primitives$P, pch = ".", asp = 1)
   polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
   invisible(NULL)
 }
 ## needs to be in silicate
 get_projection.sfc <- function(x, ...) attr(x, "crs")[["proj4string"]]
 get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4string"]]
+
+
+sb_intersection <- function(x, ...) {
+  plot(x, border = "grey")
+  ## if all layers share a triangle we keep them
+  index <- x$index %>% group_by(triangle_idx) %>% dplyr::filter(n() > 1) %>% ungroup()
+  index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
+  triangles <- x$primitives$T[index$triangle_idx, ]
+  polypath(x$primitives$P[head(t(cbind(triangles, triangles[,1], NA)), -1L), ], ...)
+}

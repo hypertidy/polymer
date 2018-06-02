@@ -1,0 +1,60 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# spacebucket
+
+The goal of spacebucket is to provide flexible and intuitive overlay methods familiar 
+to GIS workflows. 
+
+WIP
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("mdsumner/spacebucket")
+```
+
+## Example
+
+This example takes three built in data sets and merges them together as an indexed mesh. 
+
+```{r example}
+library(spacebucket)
+plot(st_geometry(A), col = viridis::viridis(nrow(A)))
+plot(st_geometry(B), col = "firebrick", add = TRUE)
+plot(st_geometry(C), col = "dodgerblue", add = TRUE)
+
+## summarize the contents
+(bucket <- spacebucket(A, B, C))
+
+## show the components pieces
+plot(bucket, asp = 1)
+```
+
+The next stage is to then pull out the intersection layer, currently we only have a function
+to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately. 
+
+```{r}
+## there's an error somewhere
+spacebucket:::sb_intersection(bucket, col = "firebrick")
+
+## but it works with pairs
+spacebucket:::sb_intersection(spacebucket(A, B), col = "firebrick")
+
+spacebucket:::sb_intersection(spacebucket(C, B), col = "firebrick")
+
+```

@@ -21,7 +21,6 @@
 spacebucket <- function(...) {
   ## combine each layer
   inputs <- list(...)
-  layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
   inputs0 <- lapply(seq_along(inputs),
                     function(x) sf::st_sf(layer = rep(x, length(inputs[[x]][[1]])), geometry = sf::st_geometry(inputs[[x]])))
 #  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
@@ -41,8 +40,8 @@ spacebucket <- function(...) {
 
   index <-   map %>% dplyr::mutate(path_ = match(path_, path$path$path_))
   paths <- path[["path"]] %>% dplyr::transmute(subobject, object, ncoords_,
-                                               layer = layers[object],
-                                               path = row_number())
+                                               path = dplyr::row_number())
+  paths$layer <- layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
 
   out <- list(input = inputs0,
        primitives = RTri,
@@ -52,7 +51,7 @@ spacebucket <- function(...) {
    out
   }
 
-#' Print spacebucket
+#' Print the primitive space bucket
 #'
 #' Print a short description of the bucket contents.
 #' @param x spacebucket
@@ -100,7 +99,7 @@ sb_intersection <- function(x, ...) {
   plot(x, border = "grey")
   ## if all layers share a triangle we keep them
   index <- x$index %>% group_by(triangle_idx) %>% dplyr::filter(n() > 1) %>% ungroup()
-  index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
+  #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
   triangles <- x$primitives$T[index$triangle_idx, ]
-  polypath(x$primitives$P[head(t(cbind(triangles, triangles[,1], NA)), -1L), ], ...)
+  polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)
 }

@@ -1,0 +1,86 @@
+#' Space bucket
+#'
+#' Convert a collection of sf data frame polygon layers to a single pool
+#' of triangles.
+#'
+#' Each triangle is identified by which path in the inputs it belongs to. None of
+#' this is very useable yet. Holes can be identified but aren't at the moment, any
+#' path that is a hole is identified per triangle.
+#'
+#' `input` is a list with all input objects
+#' `primitives` is the triangulation object
+#' `geometry_map` is the paths with their row count
+#' `index` is the mapping between triangle and path/s
+#' @param ... sf polygon data frame inputs
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' spacebucket(A, B, C)
+spacebucket <- function(...) {
+  ## combine each layer
+  inputs <- list(...)
+  inputs0 <- lapply(seq_along(inputs),
+                    function(x) sf::st_sf(layer = rep(x, length(inputs[[x]][[1]])), geometry = sf::st_geometry(inputs[[x]])))
+#  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
+
+  ## TODO1
+  ## triangulate the mesh
+  sfall <- do.call(rbind, inputs0)
+  path <- silicate::PATH(sfall)
+  RTri <- pfft::edge_RTriangle(path)
+
+  ## TODO2
+  ## identify all points by overlap with inputs
+  map <- pfft::path_triangle_map(path, RTri)
+
+  ## TODO3
+  ## sort out common CRS for inputs
+
+  out <- list(input = inputs0,
+       primitives = RTri,
+       geometry_map = gibble::gibble(sfall),
+       index = map %>% dplyr::mutate(path_ = as.integer(factor(path_))))
+   class(out) <- "spacebucket"
+   out
+  }
+
+#' Print spacebucket
+#'
+#' Print a short description of the bucket contents.
+#' @param x spacebucket
+#' @param ... ignored
+#'
+#' @return x invisibly
+#' @export
+#'
+#' @examples
+#' spacebucket(A, B, C)
+print.spacebucket <- function(x, ...) {
+  cat("SPACE BUCKET:\n")
+  cat(sprintf("Layers:    %i\n", length(x$input)))
+  cat(sprintf("Polygons:  %i\n", sum(unlist(lapply(x$input, nrow)))))
+  cat(sprintf("Triangles: %i\n", length(unique(x$index$triangle_idx))))
+  cat(sprintf("(Overlaps: %i)\n", sum(table(x$index$triangle_idx))))
+  invisible(x)
+}
+
+#' Plot the primitive space bucket
+#'
+#' @param x spacebucket
+#' @param ... arguments to [polypath]
+#'
+#' @return nothing
+#' @export
+#'
+#' @examples
+#' plot(spacebucket(A, B, C))
+plot.spacebucket <- function(x, ...) {
+  plot(x$primitives$P, pch = ".")
+  polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
+  invisible(NULL)
+}
+## needs to be in silicate
+get_projection.sfc <- function(x, ...) attr(x, "crs")[["proj4string"]]
+get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4string"]]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spacebucket.R
 \name{print.spacebucket}
 \alias{print.spacebucket}
-\title{Print spacebucket}
+\title{Print the primitive space bucket}
 \usage{
 \method{print}{spacebucket}(x, ...)
 }

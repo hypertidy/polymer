@@ -49,7 +49,7 @@ The next stage is to then pull out the intersection layer, currently we only hav
 to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately. 
 
 ```{r}
-## there's an error somewhere
+## there's an error somewhere, see that rogue triangle?
 spacebucket:::sb_intersection(bucket, col = "firebrick")
 
 ## but it works with pairs

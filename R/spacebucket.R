@@ -62,7 +62,7 @@ print.spacebucket <- function(x, ...) {
   cat(sprintf("Layers:    %i\n", length(x$input)))
   cat(sprintf("Polygons:  %i\n", sum(unlist(lapply(x$input, nrow)))))
   cat(sprintf("Triangles: %i\n", length(unique(x$index$triangle_idx))))
-  cat(sprintf("(Overlaps: %i)\n", sum(table(x$index$triangle_idx))))
+  cat(sprintf("(Overlaps: %i)\n", sum(table(x$index$triangle_idx) > 1)))
   invisible(x)
 }
 
@@ -76,6 +76,10 @@ print.spacebucket <- function(x, ...) {
 #'
 #' @examples
 #' plot(spacebucket(A, B, C))
+#' library(sf)
+#' example(st_read)
+#' bucket <- spacebucket(nc, st_jitter(nc, amount = 0.1))
+#' plot(bucket)
 plot.spacebucket <- function(x, ...) {
   plot(x$primitives$P, pch = ".")
   polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)

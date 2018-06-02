@@ -19,4 +19,8 @@ Plot the primitive space bucket
 }
 \examples{
 plot(spacebucket(A, B, C))
+library(sf)
+example(st_read)
+bucket <- spacebucket(nc, st_jitter(nc, amount = 0.1))
+plot(bucket)
 }

@@ -4,7 +4,17 @@
 # spacebucket
 
 The goal of spacebucket is to provide flexible and intuitive overlay
-methods familiar to GIS workflows.
+methods familiar to GIS workflows. This works by doing the obvious
+finite-element decomposition of all component edges in all inputs into
+triangles. Then triangles *instances* are classified (by
+point-in-polygon lookup) by inclusion within paths within objects within
+layers.
+
+The resulting mesh and inputs and indexes can be used to derive complex
+relationships between layers. Spacebucket is modelled on the concept of
+**data fusion** from a now defunct commercial package called Eonfusion.
+It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0,
+but could be modified to use the less restrictive `decido` package.
 
 WIP
 
@@ -56,7 +66,6 @@ will identify them individually and copy attributes from the input
 layers appropriately.
 
 ``` r
-## there's an error somewhere, see that rogue triangle?
 spacebucket:::sb_intersection(bucket, col = "firebrick")
 ```
 
@@ -64,7 +73,7 @@ spacebucket:::sb_intersection(bucket, col = "firebrick")
 
 ``` r
 
-## but it works with pairs
+## it works with pairs or with multiple layers
 spacebucket:::sb_intersection(spacebucket(A, B), col = "firebrick")
 ```
 
@@ -76,3 +85,11 @@ spacebucket:::sb_intersection(spacebucket(C, B), col = "firebrick")
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-3.png" width="100%" />
+
+``` r
+
+
+spacebucket:::sb_intersection(spacebucket(C, B, A, st_jitter(A, 0.1)), col = "firebrick")
+```
+
+<img src="man/figures/README-unnamed-chunk-1-4.png" width="100%" />

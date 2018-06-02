@@ -21,6 +21,7 @@
 spacebucket <- function(...) {
   ## combine each layer
   inputs <- list(...)
+  layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
   inputs0 <- lapply(seq_along(inputs),
                     function(x) sf::st_sf(layer = rep(x, length(inputs[[x]][[1]])), geometry = sf::st_geometry(inputs[[x]])))
 #  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
@@ -38,10 +39,14 @@ spacebucket <- function(...) {
   ## TODO3
   ## sort out common CRS for inputs
 
+  index <-   map %>% dplyr::mutate(path_ = match(path_, path$path$path_))
+  paths <- path[["path"]] %>% dplyr::transmute(subobject, object, ncoords_,
+                                               layer = layers[object])
+
   out <- list(input = inputs0,
        primitives = RTri,
-       geometry_map = gibble::gibble(sfall),
-       index = map %>% dplyr::mutate(path_ = as.integer(factor(path_))))
+       geometry_map = paths,
+       index = index)
    class(out) <- "spacebucket"
    out
   }

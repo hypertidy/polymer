@@ -13,9 +13,9 @@
 #' `index` is the mapping between triangle and path/s
 #' @param ... sf polygon data frame inputs
 #'
-#' @return
+#' @return a spacebucket, see details
 #' @export
-#'
+#' @importFrom rlang .data
 #' @examples
 #' spacebucket(A, B, C)
 spacebucket <- function(...) {
@@ -23,7 +23,7 @@ spacebucket <- function(...) {
   inputs <- list(...)
   inputs0 <- lapply(seq_along(inputs),
                     function(x) sf::st_sf(layer = rep(x, length(inputs[[x]][[1]])), geometry = sf::st_geometry(inputs[[x]])))
-#  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
+  #  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
 
   ## TODO1
   ## triangulate the mesh
@@ -38,18 +38,22 @@ spacebucket <- function(...) {
   ## TODO3
   ## sort out common CRS for inputs
 
-  index <-   map %>% dplyr::mutate(path_ = match(path_, path$path$path_))
-  paths <- path[["path"]] %>% dplyr::transmute(subobject, object, ncoords_,
-                                               path = dplyr::row_number())
-  paths$layer <- layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
+  index <-   map %>% dplyr::mutate(path_ = match(.data$path_, path$path$path_))
+  paths <- path[["path"]] %>%
+    dplyr::transmute(.data$subobject,
+                     .data$object,
+                     .data$ncoords_,
+                     path = dplyr::row_number())
 
+  layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
+  paths$layer <- layers[paths$object]
   out <- list(input = inputs0,
-       primitives = RTri,
-       geometry_map = paths,
-       index = index)
-   class(out) <- "spacebucket"
-   out
-  }
+              primitives = RTri,
+              geometry_map = paths,
+              index = index)
+  class(out) <- "spacebucket"
+  out
+}
 
 #' Print the primitive space bucket
 #'
@@ -78,11 +82,13 @@ print.spacebucket <- function(x, ...) {
 #'
 #' @return nothing
 #' @export
-#'
+#' @importFrom graphics plot polypath
+#' @importFrom utils head
 #' @examples
 #' plot(spacebucket(A, B, C))
 #' library(sf)
 #' example(st_read)
+#' x <- nc[1:5, ]
 #' bucket <- spacebucket(nc, st_jitter(nc, amount = 0.1))
 #' plot(bucket)
 plot.spacebucket <- function(x, ...) {
@@ -98,7 +104,9 @@ get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4str
 sb_intersection <- function(x, ...) {
   plot(x, border = "grey")
   ## if all layers share a triangle we keep them
-  index <- x$index %>% group_by(triangle_idx) %>% dplyr::filter(n() > 1) %>% ungroup()
+  index <- x$index %>%
+    dplyr::group_by(.data$triangle_idx) %>%
+    dplyr::filter(dplyr::n() > 1) %>% dplyr::ungroup()
   #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
   triangles <- x$primitives$T[index$triangle_idx, ]
   polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)

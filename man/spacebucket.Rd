@@ -9,6 +9,9 @@ spacebucket(...)
 \arguments{
 \item{...}{sf polygon data frame inputs}
 }
+\value{
+a spacebucket, see details
+}
 \description{
 Convert a collection of sf data frame polygon layers to a single pool
 of triangles.

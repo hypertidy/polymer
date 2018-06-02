@@ -9,13 +9,17 @@ LazyData: true
 ByteCompile: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
-Depends: sf
+Depends: 
+    R (>= 3.4.0), 
+    sf
 Imports: 
     silicate,
     pfft,
     gibble,
-    dplyr, 
-    RTriangle
+    dplyr,
+    RTriangle,
+    magrittr,
+    rlang
 Remotes: 
     hypertidy/silicate,
     mdsumner/pfft,

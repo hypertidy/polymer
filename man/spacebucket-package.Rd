@@ -2,17 +2,8 @@
 % Please edit documentation in R/spacebucket-package.R
 \docType{package}
 \name{spacebucket-package}
-\alias{spacebucket}
 \alias{spacebucket-package}
-\alias{spacebucket-package}
-\title{spacebucket: What the Package Does (One Line, Title Case)}
+\title{behold the spacebucket.}
 \description{
-What the package does (one paragraph).
-
 behold the spacebucket.
 }
-\author{
-\strong{Maintainer}: Michael Sumner \email{mdsumner@gmail.com}
-
-}
-\keyword{internal}

@@ -1,5 +1,3 @@
-#' @keywords internal
-"_PACKAGE"
 
 
 #' behold the spacebucket.

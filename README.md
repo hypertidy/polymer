@@ -88,7 +88,7 @@ spacebucket:::sb_intersection(spacebucket(C, B), col = "firebrick")
 
 ``` r
 
-
+## number of layers is arbitrary
 spacebucket:::sb_intersection(spacebucket(C, B, A, st_jitter(A, 0.1)), col = "firebrick")
 ```
 

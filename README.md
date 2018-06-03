@@ -1,6 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![Travis build
+status](https://travis-ci.org/mdsumner/spacebucket.svg?branch=master)](https://travis-ci.org/mdsumner/spacebucket)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/mdsumner/spacebucket?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/spacebucket)
+[![Coverage
+status](https://codecov.io/gh/mdsumner/spacebucket/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/spacebucket?branch=master)
+
 # spacebucket
 
 The goal of spacebucket is to provide flexible and intuitive overlay
@@ -15,8 +22,21 @@ relationships between layers. Spacebucket is modelled on the concept of
 **data fusion** from a now defunct commercial package called Eonfusion.
 It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0,
 but could be modified to use the less restrictive `decido` package.
+Specialist forms of this might choose other engines.
 
-WIP
+This is analogous to what GIS packages variously call “overlay”,
+“topology overlay”, “intersection” and so on. The difference is we
+want a single mesh that has information about all of its inputs in a
+lossless form. We can derive general information from the mesh and the
+links to sources without simplifying everything to a single result that
+has no connection to the sources.
+
+## WIP
+
+  - holes are identifiable but not yet explicitly classified (see pfft
+    for the machine)
+  - extend sb\_intersection to return the right parts
+  - write sensible return types and input attributes
 
 ## Installation
 
@@ -88,6 +108,8 @@ spacebucket:::sb_intersection(spacebucket(C, B), col = "firebrick")
 
 ``` r
 
+
+set.seed(sum(match(unlist(strsplit("spacebucket", "")), letters)))
 ## number of layers is arbitrary
 spacebucket:::sb_intersection(spacebucket(C, B, A, st_jitter(A, 0.1)), col = "firebrick")
 ```

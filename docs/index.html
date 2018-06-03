@@ -45,7 +45,14 @@
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/mdsumner/spacebucket">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -61,12 +68,22 @@
     
     
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <div id="spacebucket" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#spacebucket" class="anchor"></a>spacebucket</h1></div>
 <p>The goal of spacebucket is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works by doing the obvious finite-element decomposition of all component edges in all inputs into triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
-<p>The resulting mesh and inputs and indexes can be used to derive complex relationships between layers. Spacebucket is modelled on the concept of <strong>data fusion</strong> from a now defunct commercial package called Eonfusion. It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified to use the less restrictive <code>decido</code> package.</p>
-<p>WIP</p>
+<p>The resulting mesh and inputs and indexes can be used to derive complex relationships between layers. Spacebucket is modelled on the concept of <strong>data fusion</strong> from a now defunct commercial package called Eonfusion. It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified to use the less restrictive <code>decido</code> package. Specialist forms of this might choose other engines.</p>
+<p>This is analogous to what GIS packages variously call “overlay”, “topology overlay”, “intersection” and so on. The difference is we want a single mesh that has information about all of its inputs in a lossless form. We can derive general information from the mesh and the links to sources without simplifying everything to a single result that has no connection to the sources.</p>
+<div id="wip" class="section level2">
+<h2 class="hasAnchor">
+<a href="#wip" class="anchor"></a>WIP</h2>
+<ul>
+<li>holes are identifiable but not yet explicitly classified (see pfft for the machine)</li>
+<li>extend sb_intersection to return the right parts</li>
+<li>write sensible return types and input attributes</li>
+</ul>
+</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -108,8 +125,10 @@
 <a class="sourceLine" id="cb6-2" data-line-number="2">spacebucket<span class="op">:::</span><span class="kw">sb_intersection</span>(<span class="kw"><a href="reference/spacebucket.html">spacebucket</a></span>(C, B), <span class="dt">col =</span> <span class="st">"firebrick"</span>)</a></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-3.png" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">## number of layers is arbitrary</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">spacebucket<span class="op">:::</span><span class="kw">sb_intersection</span>(<span class="kw"><a href="reference/spacebucket.html">spacebucket</a></span>(C, B, A, <span class="kw">st_jitter</span>(A, <span class="fl">0.1</span>)), <span class="dt">col =</span> <span class="st">"firebrick"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">set.seed</span>(<span class="kw">sum</span>(<span class="kw">match</span>(<span class="kw">unlist</span>(<span class="kw">strsplit</span>(<span class="st">"spacebucket"</span>, <span class="st">""</span>)), letters)))</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">## number of layers is arbitrary</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">spacebucket<span class="op">:::</span><span class="kw">sb_intersection</span>(<span class="kw"><a href="reference/spacebucket.html">spacebucket</a></span>(C, B, A, <span class="kw">st_jitter</span>(A, <span class="fl">0.1</span>)), <span class="dt">col =</span> <span class="st">"firebrick"</span>)</a></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-4.png" width="100%"></p>
 </div>
 </div>
@@ -119,7 +138,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Report a bug at <br><a href="NA">NA</a>
+<li>Browse source code at <br><a href="https://github.com/mdsumner/spacebucket">https://​github.com/​mdsumner/​spacebucket</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/mdsumner/spacebucket/issues">https://​github.com/​mdsumner/​spacebucket/​issues</a>
 </li>
 </ul>
 </div>
@@ -136,7 +157,15 @@
 </ul>
 </div>
 
-      </div>
+      <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/mdsumner/spacebucket"><img src="https://travis-ci.org/mdsumner/spacebucket.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://ci.appveyor.com/project/mdsumner/spacebucket"><img src="https://ci.appveyor.com/api/projects/status/github/mdsumner/spacebucket?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
+<li><a href="https://codecov.io/github/mdsumner/spacebucket?branch=master"><img src="https://codecov.io/gh/mdsumner/spacebucket/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
+</ul>
+</div>
+</div>
 
 </div>
 

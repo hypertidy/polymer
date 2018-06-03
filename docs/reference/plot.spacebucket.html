@@ -76,7 +76,12 @@
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/mdsumner/spacebucket">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -90,7 +95,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot the primitive space bucket</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/mdsumner/spacebucket/blob/master/R/spacebucket.R'><code>R/spacebucket.R</code></a></small>
     <div class="hidden name"><code>plot.spacebucket.Rd</code></div>
     </div>
 
@@ -122,7 +127,7 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>plot</span>(<span class='fu'><a href='spacebucket.html'>spacebucket</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>))</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'><span class='fu'>library</span>(<span class='no'>sf</span>)
+    <pre class="examples"><div class='input'><span class='fu'>plot</span>(<span class='fu'><a href='spacebucket.html'>spacebucket</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>))</div><div class='img'><img src='plot.spacebucket-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>library</span>(<span class='no'>sf</span>)
 <span class='fu'>example</span>(<span class='no'>st_read</span>)</div><div class='output co'>#&gt; 
 #&gt; st_red&gt; nc = st_read(system.file("shape/nc.shp", package="sf"))
 #&gt; Reading layer `nc' from data source `/usr/local/lib/R/site-library/sf/shape/nc.shp' using driver `ESRI Shapefile'
@@ -206,7 +211,7 @@
 #&gt; st_red&gt; 
 #&gt; st_red&gt; </div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>nc</span>[<span class='fl'>1</span>:<span class='fl'>5</span>, ]
 <span class='no'>bucket</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='spacebucket.html'>spacebucket</a></span>(<span class='no'>nc</span>, <span class='fu'><a href='http://www.rdocumentation.org/packages/sf/topics/st_jitter'>st_jitter</a></span>(<span class='no'>nc</span>, <span class='kw'>amount</span> <span class='kw'>=</span> <span class='fl'>0.1</span>))
-<span class='fu'><a href='http://www.rdocumentation.org/packages/sf/topics/plot'>plot</a></span>(<span class='no'>bucket</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div></pre>
+<span class='fu'><a href='http://www.rdocumentation.org/packages/sf/topics/plot'>plot</a></span>(<span class='no'>bucket</span>)</div><div class='img'><img src='plot.spacebucket-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

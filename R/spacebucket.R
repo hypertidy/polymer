@@ -101,13 +101,3 @@ get_projection.sfc <- function(x, ...) attr(x, "crs")[["proj4string"]]
 get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4string"]]
 
 
-sb_intersection <- function(x, ...) {
-  plot(x, border = "grey")
-  ## if all layers share a triangle we keep them
-  index <- x$index %>%
-    dplyr::group_by(.data$triangle_idx) %>%
-    dplyr::filter(dplyr::n() > 1) %>% dplyr::ungroup()
-  #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
-  triangles <- x$primitives$T[index$triangle_idx, ]
-  polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)
-}

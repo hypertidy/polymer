@@ -5,6 +5,7 @@
 #' @name spacebucket-package
 #' @docType package
 #' @importFrom sf st_geometry
+#' @importFrom rlang .data
 NULL
 
 #' Simple data examples

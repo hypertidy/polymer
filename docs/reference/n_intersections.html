@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Print the primitive space bucket — print.spacebucket • spacebucket</title>
+<title>N intersections — n_intersections • spacebucket</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Print the primitive space bucket — print.spacebucket" />
+<meta property="og:title" content="N intersections — n_intersections" />
 
-<meta property="og:description" content="Print a short description of the bucket contents." />
+<meta property="og:description" content="Find all fragments that are intersected by any other feature in any layer." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -97,19 +97,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Print the primitive space bucket</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mdsumner/spacebucket/blob/master/R/spacebucket.R'><code>R/spacebucket.R</code></a></small>
-    <div class="hidden name"><code>print.spacebucket.Rd</code></div>
+    <h1>N intersections</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mdsumner/spacebucket/blob/master/R/intersections.R'><code>R/intersections.R</code></a></small>
+    <div class="hidden name"><code>n_intersections.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Print a short description of the bucket contents.</p>
+    <p>Find all fragments that are intersected by any other feature in any layer.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for spacebucket</span>
-<span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>n_intersections</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -119,22 +118,30 @@
       <td><p>spacebucket</p></td>
     </tr>
     <tr>
+      <th>n</th>
+      <td><p>minimum number of intersections to keep</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>ignored</p></td>
+      <td><p>ignored for now</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>x invisibly</p>
+    <p>sf data frame</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Returns a simple features data frame with all triangles that occur <code>n</code> times with
+<code>n = 2</code> as a minimum. Each triangle feature contains a nested data frame in <code>idx</code>
+that keeps the links to the input layers by <code>layer</code>, <code>object</code> and <code>path</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='spacebucket.html'>spacebucket</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>)</div><div class='output co'>#&gt; SPACE BUCKET:
-#&gt; Layers:    3
-#&gt; Polygons:  6
-#&gt; Triangles: 42
-#&gt; (Overlaps: 15)</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>plot</span>(<span class='no'>A</span>[<span class='st'>"layer"</span>], <span class='kw'>reset</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='input'><span class='fu'>plot</span>(<span class='no'>B</span>, <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"hotpink"</span>)</div><div class='input'><span class='fu'>plot</span>(<span class='no'>C</span>, <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"firebrick"</span>)</div><div class='input'>
+<span class='no'>sb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='spacebucket.html'>spacebucket</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>)
+<span class='fu'>plot</span>(<span class='fu'>n_intersections</span>(<span class='no'>sb</span>), <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"grey"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: ignoring all but the first attribute</span></div><div class='input'><span class='fu'>plot</span>(<span class='fu'>n_intersections</span>(<span class='no'>sb</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>3</span>), <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"dodgerblue"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: ignoring all but the first attribute</span></div><div class='img'><img src='n_intersections-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -142,6 +149,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

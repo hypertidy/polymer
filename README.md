@@ -143,6 +143,24 @@ plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 ``` r
+
+
+x <- n_intersections(sb, n = 3)
+
+## see how we know the identity of each input layer
+as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
+#> # A tibble: 6 x 4
+#>   idx.triangle_idx  path object layer
+#>              <int> <int>  <int> <int>
+#> 1               27     1      1     1
+#> 2               27     5      5     2
+#> 3               27     6      6     3
+#> 4               39     1      1     1
+#> 5               39     5      5     2
+#> 6               39     6      6     3
+```
+
+``` r
 plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA)
 plot(field, add = TRUE, col = NA)
 

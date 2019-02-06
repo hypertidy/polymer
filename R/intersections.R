@@ -39,7 +39,7 @@ n_intersections <- function(x, n = 2, ...) {
     dplyr::mutate(nn = dplyr::n()) %>%
     dplyr::ungroup() %>%
     dplyr::filter(.data$nn >= n) %>%
-    dplyr::transmute(path = path_, triangle_idx)
+    dplyr::transmute(path = .data$path_, .data$triangle_idx)
   gmap <- x$geometry_map %>%
     dplyr::select(.data$object, .data$layer, .data$path)
   ## every unique triangle keeps a record of which path, object, layer
@@ -48,7 +48,7 @@ n_intersections <- function(x, n = 2, ...) {
              function(piece) {
                ## path joins us to layer + object
                piece %>% dplyr::inner_join(gmap, "path")
-             }) %>% dplyr::group_by(triangle_idx) %>% tidyr::nest()
+             }) %>% dplyr::group_by(.data$triangle_idx) %>% tidyr::nest()
 
   ## now build each triangle
   P <- x$primitives$P

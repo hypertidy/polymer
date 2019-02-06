@@ -1,8 +1,10 @@
 Package: spacebucket
-Title: What the Package Does (One Line, Title Case)
+Title: Flexible and Intuitive Overlay Methods
 Version: 0.0.0.9000
 Authors@R: person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: General intersections via a triangle pool from disparate polygon inputs. Overlap is
+ determined via finite-element decomposition of all component edges in all inputs into triangles. 
+ Then triangles instances are classified (by point-in-polygon lookup) by objects within layers. 
 License: GPL-3
 URL: https://github.com/mdsumner/spacebucket
 BugReports: https://github.com/mdsumner/spacebucket/issues
@@ -16,7 +18,9 @@ Imports:
     rlang,
     RTriangle,
     sf,
-    silicate
+    silicate (>= 0.1.5.9001),
+    tidyr,
+    purrr
 Suggests: 
     covr,
     testthat
@@ -28,4 +32,4 @@ ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

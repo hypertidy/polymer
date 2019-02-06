@@ -1,4 +1,10 @@
-
+#' data
+#'
+#' Data from online discussion.
+#' @name field
+#' @docType data
+#' @aliases soil
+NULL
 
 #' behold the spacebucket.
 #'

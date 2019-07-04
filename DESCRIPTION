@@ -1,6 +1,6 @@
 Package: spacebucket
 Title: Flexible and Intuitive Overlay Methods
-Version: 0.0.0.9000
+Version: 0.1.0.9001
 Authors@R: person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre"))
 Description: General intersections via a triangle pool from disparate polygon inputs. Overlap is
  determined via finite-element decomposition of all component edges in all inputs into triangles. 
@@ -18,7 +18,7 @@ Imports:
     rlang,
     RTriangle,
     sf,
-    silicate (>= 0.1.5.9001),
+    silicate (>= 0.1.5.9003),
     tidyr,
     purrr
 Suggests: 

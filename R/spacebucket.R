@@ -41,12 +41,12 @@ spacebucket <- function(...) {
   index <-   map %>% dplyr::mutate(path_ = match(.data$path_, path$path$path_))
   paths <- path[["path"]] %>%
     dplyr::transmute(.data$subobject,
-                     .data$object,
+                     .data$object_,
                      .data$ncoords_,
                      path = dplyr::row_number())
 
   layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
-  paths$layer <- layers[paths$object]
+  paths$layer <- layers[paths$object_]
   out <- list(input = inputs0,
               primitives = RTri,
               geometry_map = paths,

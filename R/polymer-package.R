@@ -8,7 +8,7 @@ NULL
 
 #' behold the spacebucket.
 #'
-#' @name spacebucket-package
+#' @name polymer-package
 #' @docType package
 #' @importFrom sf st_geometry
 #' @importFrom rlang .data

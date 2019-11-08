@@ -6,7 +6,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis build status](https://travis-ci.org/mdsumner/spacebucket.svg?branch=master)](https://travis-ci.org/mdsumner/spacebucket) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mdsumner/spacebucket?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/spacebucket) [![Coverage status](https://codecov.io/gh/mdsumner/spacebucket/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/spacebucket?branch=master)
+[![Travis build status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer) [![Coverage status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -15,16 +15,16 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# spacebucket
+# polymer
 
-The goal of spacebucket is to provide flexible and intuitive overlay methods
+The goal of polymer is to provide flexible and intuitive overlay methods
 familiar to GIS workflows. This works by doing the obvious finite-element
 decomposition of all component edges in all inputs into triangles. Then
 triangles *instances* are classified (by point-in-polygon lookup) by inclusion
 within paths within objects within layers.
 
 The resulting mesh and inputs and indexes can be used to derive complex
-relationships between layers. Spacebucket is modelled on the concept of **data
+relationships between layers. polymer is modelled on the concept of **data
 fusion** from a now defunct commercial package called Eonfusion. It relies on
 the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified
 to use the less restrictive `decido` package. Specialist forms of this might
@@ -51,7 +51,7 @@ You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mdsumner/spacebucket")
+devtools::install_github("mdsumner/polymer")
 ```
 
 ## Example
@@ -59,7 +59,7 @@ devtools::install_github("mdsumner/spacebucket")
 This example takes three built in data sets and merges them together as an indexed mesh. 
 
 ```{r example}
-library(spacebucket)
+library(polymer)
 plot(sf::st_geometry(A), col = viridis::viridis(nrow(A)))
 plot(sf::st_geometry(B), col = "firebrick", add = TRUE)
 plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
@@ -75,17 +75,17 @@ The next stage is to then pull out the intersection layer, currently we only hav
 to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately. 
 
 ```{r}
-spacebucket:::sb_intersection(bucket, col = "firebrick")
+polymer:::sb_intersection(bucket, col = "firebrick")
 
 ## it works with pairs or with multiple layers
-spacebucket:::sb_intersection(spacebucket(A, B), col = "firebrick")
+polymer:::sb_intersection(spacebucket(A, B), col = "firebrick")
 
-spacebucket:::sb_intersection(spacebucket(C, B), col = "firebrick")
+polymer:::sb_intersection(spacebucket(C, B), col = "firebrick")
 
 
 set.seed(sum(match(unlist(strsplit("spacebucket", "")), letters)))
 ## number of layers is arbitrary
-spacebucket:::sb_intersection(spacebucket(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
+polymer:::sb_intersection(spacebucket(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
 
 
 ```
@@ -94,13 +94,13 @@ spacebucket:::sb_intersection(spacebucket(C, B, A, sf::st_jitter(A, 0.1)), col =
 A function `n_intersections` will pull out any >=n overlaps. 
 
 ```{r nintersections}
-library(basf)
-plot(A["layer"], col = viridis::viridis(nrow(A)))
+
+plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 ```
 ```{r}
-plot(A["layer"], col = viridis::viridis(nrow(A)))
+plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
@@ -112,11 +112,11 @@ plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 x <- n_intersections(sb, n = 3)
 
 ## see how we know the identity of each input layer
-as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
+tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 ```
 
 ```{r so-example}
-plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA)
+plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
 soil_field <- spacebucket(soil, field)
@@ -128,6 +128,7 @@ From `vignette("over", package = "sp")`.
 
 ```{r over}
  library(sp)
+library(sf)
  x = c(0.5, 0.5, 1.0, 1.5)
  y = c(1.5, 0.5, 0.5, 0.5)
  xy = cbind(x,y)
@@ -144,6 +145,11 @@ From `vignette("over", package = "sp")`.
 ))
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
 (polb <- spacebucket(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
-plot(polb)
+plot(polb, reset = FALSE)
 plot(n_intersections(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
 ```
+
+
+---
+
+Please note that the polymer project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

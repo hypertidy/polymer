@@ -1,33 +1,30 @@
-Package: spacebucket
+Package: polymer
 Title: Flexible and Intuitive Overlay Methods
-Version: 0.1.0.9001
+Version: 0.2.0
 Authors@R: person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre"))
 Description: General intersections via a triangle pool from disparate polygon inputs. Overlap is
  determined via finite-element decomposition of all component edges in all inputs into triangles. 
  Then triangles instances are classified (by point-in-polygon lookup) by objects within layers. 
 License: GPL-3
-URL: https://github.com/mdsumner/spacebucket
-BugReports: https://github.com/mdsumner/spacebucket/issues
+URL: https://github.com/mdsumner/polymer
+BugReports: https://github.com/mdsumner/polymer/issues
 Depends: 
     R (>= 3.4.0)
 Imports: 
     dplyr,
     gibble,
     magrittr,
-    pfft,
     rlang,
     RTriangle,
     sf,
-    silicate (>= 0.1.5.9003),
+    silicate (>= 0.2.0),
     tidyr,
     purrr
 Suggests: 
     covr,
     testthat
 Remotes: 
-    hypertidy/silicate,
-    mdsumner/gibble,
-    mdsumner/pfft
+    mdsumner/gibble
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

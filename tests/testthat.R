@@ -1,4 +1,4 @@
 library(testthat)
-library(spacebucket)
+library(polymer)
 
-test_check("spacebucket")
+test_check("polymer")

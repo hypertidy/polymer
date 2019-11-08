@@ -29,11 +29,11 @@ spacebucket <- function(...) {
   ## triangulate the mesh
   sfall <- do.call(rbind, inputs0)
   path <- silicate::PATH(sfall)
-  RTri <- pfft::edge_RTriangle(path)
+  RTri <- pfft_edge_RTriangle(path)
 
   ## TODO2
   ## identify all points by overlap with inputs
-  map <- pfft::path_triangle_map(path, RTri)
+  map <- pfft_path_triangle_map(path, RTri)
 
   ## TODO3
   ## sort out common CRS for inputs

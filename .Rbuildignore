@@ -6,3 +6,5 @@
 ^appveyor\.yml$
 ^codecov\.yml$
 ^docs$
+^polymer\.Rproj$
+^CODE_OF_CONDUCT\.md$

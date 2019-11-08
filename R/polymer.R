@@ -14,7 +14,7 @@
 #' @param ... sf polygon data frame inputs
 #'
 #' @return a spacebucket, see details
-#' @export
+#' @noRd
 #' @importFrom rlang .data
 #' @examples
 #' spacebucket(A, B, C)
@@ -62,7 +62,7 @@ spacebucket <- function(...) {
 #' @param ... ignored
 #'
 #' @return x invisibly
-#' @export
+#' @noRd
 #'
 #' @examples
 #' spacebucket(A, B, C)
@@ -81,7 +81,7 @@ print.spacebucket <- function(x, ...) {
 #' @param ... arguments to [polypath]
 #'
 #' @return nothing
-#' @export
+#' @noRd
 #' @importFrom graphics plot polypath
 #' @importFrom utils head
 #' @examples

@@ -8,6 +8,12 @@ status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?bran
 [![Coverage
 status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
 
+# CURRENTLY IN MAINTENANCE MODE
+
+Not working rn.
+
+…
+
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods

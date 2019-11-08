@@ -27,11 +27,15 @@ capture the input shapes.
 
 There are two functions:
 
-  - [polymer()]() build the triangle pool from 1 or more input layers
-  - [layer\_n()]() extract a simple features layer composed of
-    n-overlaps from the inputs to `polymer()` (default is 2)
+  - `polymer()` build the triangle pool from 1 or more input layers
+  - `layer_n()` extract a simple features layer composed of n-overlaps
+    from the inputs to `polymer()` (default is 2)
 
-There are [print()]() and [plot()]() methods for the polymer pool.
+There are
+[print](https://mdsumner.github.io/polymer/reference/print.polymer.html)
+and
+[plot](https://mdsumner.github.io/polymer/reference/plot.polymer.html%5D)
+methods for the polymer pool.
 
 We currently ***don’t*** keep the input layers linked in the output from
 `layer_n()` but this will be a key feature in future versions. (You can
@@ -43,7 +47,7 @@ without duplicating geometries.
 
   - holes are identifiable but not yet explicitly classified
   - extend sb\_intersection to return the right parts
-  - write sensible return types and input attributes
+  - write sensible return types and include nput attributes
 
 ## Installation
 

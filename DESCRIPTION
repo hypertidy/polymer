@@ -19,7 +19,9 @@ Imports:
     sf,
     silicate (>= 0.2.0),
     tidyr,
-    purrr
+    purrr,
+    polyclip,
+    tibble
 Suggests: 
     covr,
     testthat

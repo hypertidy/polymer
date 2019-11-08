@@ -20,21 +20,7 @@ extents <- function(x) {
 #' @noRd
 extents.default <- function(x) extents(silicate::PATH(x))
 
-#' @noRd
-#' @importFrom rlang .data
-#' @importFrom dplyr %>%
-extents.SC <- function(x) {
-  x0 <- x[["edge"]] %>%
-    dplyr::inner_join(x[["vertex"]], c(".vx0" = "vertex_"))  %>%
-    dplyr::transmute(x0 = x_, y0 = y_)
-  x1 <- x[["edge"]] %>%
-    dplyr::inner_join(x[["vertex"]], c(".vx1" = "vertex_"))  %>%
-    dplyr::transmute(x1 = x_, y1 = y_, edge_ = edge_)
 
-  edges <- dplyr::bind_cols(x0, x1)
-  tibble::tibble(xmn = pmin(edges$x0, edges$x1), xmx = pmax(edges$x0, edges$x1),
-                 ymn = pmin(edges$y0, edges$y1), ymx = pmax(edges$y0, edges$y1))
-}
 
 
 

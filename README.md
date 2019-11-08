@@ -11,11 +11,10 @@ status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](h
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
-familiar to GIS workflows. This works by doing the obvious
-finite-element decomposition of all component edges in all inputs into
-triangles. Then triangles *instances* are classified (by
-point-in-polygon lookup) by inclusion within paths within objects within
-layers.
+familiar to GIS workflows. This works via finite-element decomposition
+of all component edges in all inputs into triangles. Then triangles
+*instances* are classified (by point-in-polygon lookup) by inclusion
+within paths within objects within layers.
 
 An example. This plot on the left shows 3 overlapping polygon layers,
 four squares on the bottom, then a single triangle, and then a blue
@@ -24,6 +23,8 @@ input edge included, the purple region has two overlappping polygons,
 the grey region has three. We can distinguish the various layers by what
 parts of the plane they occupy, with finite elements that collectively
 capture the input shapes.
+
+<img src="man/figures/README-panels-1.png" width="100%" />
 
 There are two functions:
 

@@ -107,11 +107,11 @@ print.polymer <- function(x, ...) {
 plot.polymer <- function(x, ..., show_intersection = FALSE) {
 
   if (show_intersection) {
-    plot(x, border = "grey")
+    plot(x, border = "grey", asp = 1, xlab = "", ylab = "")
 
     sb_intersection(x, ...)
   } else {
-    plot(x$primitives$P, pch = ".", asp = 1, xlab = "", ylab = "")
+    plot(x$primitives$P, pch = ".", asp = 1, xlab = "", ylab = "", axes = FALSE)
     polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
 
   }

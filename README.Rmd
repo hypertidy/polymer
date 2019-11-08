@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
-familiar to GIS workflows. This works by doing the obvious finite-element
-decomposition of all component edges in all inputs into triangles. Then
+familiar to GIS workflows. This works via finite-element
+decomposition of all component edges in all inputs as triangles. Then
 triangles *instances* are classified (by point-in-polygon lookup) by inclusion
 within paths within objects within layers.
 
@@ -31,7 +31,6 @@ shows the entire mesh with every input edge included, the purple region has two 
 
 ```{r panels, echo=FALSE}
 library(polymer)
-graphics.off()
 par(mfrow = c(1, 2), mar = rep(0, 4))
 plot(sf::st_geometry(A), col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(sf::st_geometry(B), col = "firebrick", add = TRUE)

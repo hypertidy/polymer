@@ -73,16 +73,17 @@
 <div id="polymer" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#polymer" class="anchor"></a>polymer</h1></div>
-<p>The goal of polymer is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works by doing the obvious finite-element decomposition of all component edges in all inputs into triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
+<p>The goal of polymer is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works via finite-element decomposition of all component edges in all inputs into triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
 <p>An example. This plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes.</p>
+<p><img src="reference/figures/README-panels-1.png" width="100%"></p>
 <p>There are two functions:</p>
 <ul>
 <li>
-<a href="https://mdsumner.github.io/polymer/reference/polymer.html">polymer()</a> build the triangle pool from 1 or more input layers</li>
+<code><a href="reference/polymer.html">polymer()</a></code> build the triangle pool from 1 or more input layers</li>
 <li>
-<a href="https://mdsumner.github.io/polymer/reference/layer_n.html">layer_n()</a> extract a simple features layer composed of n-overlaps from the inputs to <code><a href="reference/polymer.html">polymer()</a></code> (default is 2)</li>
+<code><a href="reference/layer_n.html">layer_n()</a></code> extract a simple features layer composed of n-overlaps from the inputs to <code><a href="reference/polymer.html">polymer()</a></code> (default is 2)</li>
 </ul>
-<p>There are <a href="">print(https://mdsumner.github.io/polymer/reference/print.polymer.html)</a> and <a href="">plot(https://mdsumner.github.io/polymer/reference/plot.polymer.html)</a> methods for the polymer pool.</p>
+<p>There are <a href="https://mdsumner.github.io/polymer/reference/print.polymer.html">print</a> and <a href="https://mdsumner.github.io/polymer/reference/plot.polymer.html%5D">plot</a> methods for the polymer pool.</p>
 <p>We currently <strong><em>don’t</em></strong> keep the input layers linked in the output from <code><a href="reference/layer_n.html">layer_n()</a></code> but this will be a key feature in future versions. (You can set an argument to keep them if you are adventurous). We need some intermediate forms because sf itself cannot store multi-relations without duplicating geometries.</p>
 <div id="wip" class="section level2">
 <h2 class="hasAnchor">

@@ -35,8 +35,8 @@ has no connection to the sources.
 
 ## WIP
 
-  - holes are identifiable but not yet explicitly classified (see pfft
-    for the machine)
+  - spacebucket() needs a new name - polymer()?
+  - holes are identifiable but not yet explicitly classified
   - extend sb\_intersection to return the right parts
   - write sensible return types and input attributes
 

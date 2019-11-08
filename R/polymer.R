@@ -1,3 +1,15 @@
+new_polymer <- function(input,
+                        primitives,
+                        geometry_map,
+                        index) {
+  structure(list(input = input,
+                 primitives = primitives,
+                 geometry_map = geometry_map,
+                 index = index), class = "polymer")
+}
+
+
+
 #' Polymer
 #'
 #' Convert a collection of sf data frame polygon layers to a single pool
@@ -47,17 +59,15 @@ polymer <- function(...) {
 
   layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
   paths$layer <- layers[paths$object_]
-  out <- list(input = inputs0,
+  new_polymer(input = inputs0,
               primitives = RTri,
               geometry_map = paths,
               index = index)
-  class(out) <- "polymer"
-  out
 }
 
-#' Print the primitive space bucket
+#' Print polymer
 #'
-#' Print a short description of the bucket contents.
+#' Print a short description of the polymer contents.
 #' @param x polymer
 #' @param ... ignored
 #'
@@ -67,7 +77,7 @@ polymer <- function(...) {
 #' @examples
 #' polymer(A, B, C)
 print.polymer <- function(x, ...) {
-  cat("SPACE BUCKET:\n")
+  cat("polymer mesh:\n")
   cat(sprintf("Layers:    %i\n", length(x$input)))
   cat(sprintf("Polygons:  %i\n", sum(unlist(lapply(x$input, nrow)))))
   cat(sprintf("Triangles: %i\n", length(unique(x$index$triangle_idx))))
@@ -75,12 +85,15 @@ print.polymer <- function(x, ...) {
   invisible(x)
 }
 
-#' Plot the primitive space bucket
+#' Plot polymer
 #'
+#' The default plot shows only the mesh. If `show_intersection = TRUE`, the part
+#' of the mesh that has 2 intersecting regions or more is contrasted to the rest.
 #' @param x polymer
 #' @param ... arguments to [polypath]
+#' @param show_intersection logical, plot the intersection region contrasted to the pool (default `FALSE`)
 #'
-#' @return nothing
+#' @return the input, invisibly
 #' @export
 #' @importFrom graphics plot polypath
 #' @importFrom utils head
@@ -88,16 +101,31 @@ print.polymer <- function(x, ...) {
 #' plot(polymer(A, B, C))
 #' library(sf)
 #' example(st_read)
-#' x <- nc[1:5, ]
-#' bucket <- polymer(nc, st_jitter(nc, amount = 0.1))
-#' plot(bucket)
-plot.polymer <- function(x, ...) {
-  plot(x$primitives$P, pch = ".", asp = 1)
-  polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
-  invisible(NULL)
+#' nc <- nc[1:5, ]
+#' x <- polymer(nc, st_jitter(nc, amount = 0.1))
+#' plot(x)
+plot.polymer <- function(x, ..., show_intersection = FALSE) {
+
+  if (show_intersection) {
+    plot(x, border = "grey")
+
+    sb_intersection(x, ...)
+  } else {
+    plot(x$primitives$P, pch = ".", asp = 1, xlab = "", ylab = "")
+    polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
+
+  }
+  invisible(x)
 }
 ## needs to be in silicate
 get_projection.sfc <- function(x, ...) attr(x, "crs")[["proj4string"]]
 get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4string"]]
 
-
+sb_intersection <- function(x, ...) {
+  index <- x$index %>%
+    dplyr::group_by(.data$triangle_idx) %>%
+    dplyr::filter(dplyr::n() > 1) %>% dplyr::ungroup()
+  #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
+  triangles <- x$primitives$T[index$triangle_idx, ]
+  polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)
+}

@@ -3,7 +3,7 @@
 S3method(plot,polymer)
 S3method(print,polymer)
 export("%>%")
-export(n_intersections)
+export(layer_n)
 export(polymer)
 importFrom(dplyr,"%>%")
 importFrom(graphics,plot)

@@ -1,14 +1,5 @@
 
-sb_intersection <- function(x, ...) {
-  plot(x, border = "grey")
-  ## if all layers share a triangle we keep them
-  index <- x$index %>%
-    dplyr::group_by(.data$triangle_idx) %>%
-    dplyr::filter(dplyr::n() > 1) %>% dplyr::ungroup()
-  #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
-  triangles <- x$primitives$T[index$triangle_idx, ]
-  polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)
-}
+
 
 
 #' N intersections
@@ -18,22 +9,26 @@ sb_intersection <- function(x, ...) {
 #' Returns a simple features data frame with all triangles that occur `n` times with
 #' `n = 2` as a minimum. Each triangle feature contains a nested data frame in `idx`
 #' that keeps the links to the input layers by `layer`, `object` and `path`.
+#'
 #' @param x polymer
 #' @param n minimum number of intersections to keep
 #' @param ... ignored for now
+#' @param keep_index for expert use only, maintains the list of triangle indexes
+#' on the sf output (and sf cannot plot if that is present)
 #'
 #' @return sf data frame
 #' @export
 #'
 #' @examples
+#' library(sf)
 #' plot(A["layer"], reset = TRUE)
 #' plot(B, add = TRUE, col = "hotpink")
 #' plot(C, add = TRUE, col = "firebrick")
 #'
 #' sb <- polymer(A, B, C)
-#' plot(n_intersections(sb), add = TRUE, col = "grey")
-#' plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
-n_intersections <- function(x, n = 2, ...) {
+#' plot(layer_n(sb), add = TRUE, col = "grey")
+#' plot(layer_n(sb, n = 3), add = TRUE, col = "dodgerblue")
+layer_n <- function(x, n = 2, ..., keep_index = FALSE) {
   triangles <- x$index %>%
     dplyr::group_by(.data$triangle_idx) %>%
     dplyr::mutate(nn = dplyr::n()) %>%
@@ -53,5 +48,14 @@ n_intersections <- function(x, n = 2, ...) {
   ## now build each triangle
   P <- x$primitives$P
   TR <- x$primitives$T
-  sf::st_sf(idx = idx, geometry = sf::st_sfc(purrr::map(idx$triangle_idx, ~sf::st_polygon(list(P[TR[.x, ][c(1, 2, 3, 1)], ])))))
+  geom <- sf::st_sfc(purrr::map(idx$triangle_idx, ~sf::st_polygon(list(P[TR[.x, ][c(1, 2, 3, 1)], ]))))
+  if (keep_index) {
+    out <- sf::st_sf(id = seq_along(geom),
+            idx = idx,
+            geometry = geom)
+  } else {
+    out <- sf::st_sf(id = seq_along(geom),
+                     geometry = geom)
+  }
+  out
 }

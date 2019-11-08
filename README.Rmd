@@ -7,6 +7,8 @@ editor_options:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![Travis build status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer) [![Coverage status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
+
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -15,11 +17,6 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# CURRENTLY IN MAINTENANCE MODE
-
-Not working rn. 
-
-...
 
 # polymer
 
@@ -29,19 +26,32 @@ decomposition of all component edges in all inputs into triangles. Then
 triangles *instances* are classified (by point-in-polygon lookup) by inclusion
 within paths within objects within layers.
 
-The resulting mesh and inputs and indexes can be used to derive complex
-relationships between layers. polymer is modelled on the concept of **data
-fusion** from a now defunct commercial package called Eonfusion. It relies on
-the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified
-to use the less restrictive `decido` package. Specialist forms of this might
-choose other engines - the crux is constrained triangulation, and for planar shapes high-quality triangles aren't required so long as all inputs edges are preserved. 
+An example. This plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel
+shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes. 
 
-This is analogous to what GIS packages variously call "overlay", "topology
-overlay", "intersection" and so on. The difference is we want a single mesh that
-has information about all of its inputs in a lossless form. We can derive
-general information from the mesh and the links to sources without simplifying
-everything to a single result that has no connection to the sources.
+```{r panels, echo=FALSE}
+library(polymer)
+graphics.off()
+par(mfrow = c(1, 2), mar = rep(0, 4))
+plot(sf::st_geometry(A), col = viridis::viridis(nrow(A)), reset = FALSE)
+plot(sf::st_geometry(B), col = "firebrick", add = TRUE)
+plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
+pool <- polymer(A, B, C)
 
+plot(pool, show_intersection = TRUE)
+plot(layer_n(pool, n = 2), add = TRUE, col = "purple")
+plot(layer_n(pool, n = 3), add = TRUE, col = "grey70")
+```
+
+
+There are two functions: 
+
+* [polymer()]() build the triangle pool from 1 or more input layers
+* [layer_n()]() extract a simple features layer composed of n-overlaps from the inputs to `polymer()` (default is 2)
+
+There are [print()]() and [plot()]() methods for the polymer pool. 
+
+We currently ***don't*** keep the input layers linked in the output from `layer_n()` but this will be a key feature in future versions. (You can set an argument to keep them if you are adventurous). We need some intermediate forms because sf itself cannot store multi-relations without duplicating geometries.  
 
 ## WIP
 
@@ -71,33 +81,33 @@ plot(sf::st_geometry(B), col = "firebrick", add = TRUE)
 plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 
 ## summarize the contents
-(bucket <- polymer(A, B, C))
+(pool <- polymer(A, B, C))
 
 ## show the components pieces
-plot(bucket, asp = 1)
+plot(pool, asp = 1)
 ```
 
 The next stage is to then pull out the intersection layer, currently we only have a function
 to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately. 
 
 ```{r}
-polymer:::sb_intersection(bucket, col = "firebrick")
+plot(pool, col = "firebrick", show_intersection = TRUE)
 
 ## it works with pairs or with multiple layers
-polymer:::sb_intersection(polymer(A, B), col = "firebrick")
+plot(polymer(A, B), col = "firebrick", show_intersection = TRUE)
 
-polymer:::sb_intersection(polymer(C, B), col = "firebrick")
+plot(polymer(C, B), col = "firebrick", show_intersection = TRUE)
 
 
 set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
 ## number of layers is arbitrary
-polymer:::sb_intersection(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
+plot(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick", show_intersection = TRUE)
 
 
 ```
 
 
-A function `n_intersections` will pull out any >=n overlaps. 
+A function `layer_n` will pull out any >=n overlaps. 
 
 ```{r nintersections}
 
@@ -111,11 +121,11 @@ plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
 sb <- polymer(A, B, C)
-plot(n_intersections(sb), add = TRUE, col = "grey")
-plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
+plot(layer_n(sb), add = TRUE, col = "grey")
+plot(layer_n(sb, n = 3), add = TRUE, col = "dodgerblue")
 
 
-x <- n_intersections(sb, n = 3)
+x <- layer_n(sb, n = 3)
 
 ## see how we know the identity of each input layer
 tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
@@ -126,7 +136,7 @@ plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
 soil_field <- polymer(soil, field)
-plot(n_intersections(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
+plot(layer_n(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 ```
 
 
@@ -152,8 +162,23 @@ library(sf)
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
 (polb <- polymer(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
 plot(polb, reset = FALSE)
-plot(n_intersections(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
+plot(layer_n(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
 ```
+
+## Background details 
+
+The resulting mesh and inputs and indexes can be used to derive complex
+relationships between layers. polymer is modelled on the concept of **data
+fusion** from a now defunct commercial package called Eonfusion. It relies on
+the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified
+to use the less restrictive `decido` package. Specialist forms of this might
+choose other engines - the crux is constrained triangulation, and for planar shapes high-quality triangles aren't required so long as all inputs edges are preserved. 
+
+This is analogous to what GIS packages variously call "overlay", "topology
+overlay", "intersection" and so on. The difference is we want a single mesh that
+has information about all of its inputs in a lossless form. We can derive
+general information from the mesh and the links to sources without simplifying
+everything to a single result that has no connection to the sources.
 
 
 ---

@@ -8,12 +8,6 @@ status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?bran
 [![Coverage
 status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
 
-# CURRENTLY IN MAINTENANCE MODE
-
-Not working rn.
-
-…
-
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
@@ -23,21 +17,27 @@ triangles. Then triangles *instances* are classified (by
 point-in-polygon lookup) by inclusion within paths within objects within
 layers.
 
-The resulting mesh and inputs and indexes can be used to derive complex
-relationships between layers. polymer is modelled on the concept of
-**data fusion** from a now defunct commercial package called Eonfusion.
-It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0,
-but could be modified to use the less restrictive `decido` package.
-Specialist forms of this might choose other engines - the crux is
-constrained triangulation, and for planar shapes high-quality triangles
-aren’t required so long as all inputs edges are preserved.
+An example. This plot on the left shows 3 overlapping polygon layers,
+four squares on the bottom, then a single triangle, and then a blue
+elongated rectangle. The next panel shows the entire mesh with every
+input edge included, the purple region has two overlappping polygons,
+the grey region has three. We can distinguish the various layers by what
+parts of the plane they occupy, with finite elements that collectively
+capture the input shapes.
 
-This is analogous to what GIS packages variously call “overlay”,
-“topology overlay”, “intersection” and so on. The difference is we
-want a single mesh that has information about all of its inputs in a
-lossless form. We can derive general information from the mesh and the
-links to sources without simplifying everything to a single result that
-has no connection to the sources.
+There are two functions:
+
+  - [polymer()]() build the triangle pool from 1 or more input layers
+  - [layer\_n()]() extract a simple features layer composed of
+    n-overlaps from the inputs to `polymer()` (default is 2)
+
+There are [print()]() and [plot()]() methods for the polymer pool.
+
+We currently ***don’t*** keep the input layers linked in the output from
+`layer_n()` but this will be a key feature in future versions. (You can
+set an argument to keep them if you are adventurous). We need some
+intermediate forms because sf itself cannot store multi-relations
+without duplicating geometries.
 
 ## WIP
 
@@ -72,15 +72,15 @@ plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 ``` r
 
 ## summarize the contents
-(bucket <- polymer(A, B, C))
-#> SPACE BUCKET:
+(pool <- polymer(A, B, C))
+#> polymer mesh:
 #> Layers:    3
 #> Polygons:  6
 #> Triangles: 42
 #> (Overlaps: 15)
 
 ## show the components pieces
-plot(bucket, asp = 1)
+plot(pool, asp = 1)
 ```
 
 <img src="man/figures/README-example-2.png" width="100%" />
@@ -91,7 +91,7 @@ will identify them individually and copy attributes from the input
 layers appropriately.
 
 ``` r
-polymer:::sb_intersection(bucket, col = "firebrick")
+plot(pool, col = "firebrick", show_intersection = TRUE)
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
@@ -99,14 +99,14 @@ polymer:::sb_intersection(bucket, col = "firebrick")
 ``` r
 
 ## it works with pairs or with multiple layers
-polymer:::sb_intersection(polymer(A, B), col = "firebrick")
+plot(polymer(A, B), col = "firebrick", show_intersection = TRUE)
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-2.png" width="100%" />
 
 ``` r
 
-polymer:::sb_intersection(polymer(C, B), col = "firebrick")
+plot(polymer(C, B), col = "firebrick", show_intersection = TRUE)
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-3.png" width="100%" />
@@ -116,12 +116,12 @@ polymer:::sb_intersection(polymer(C, B), col = "firebrick")
 
 set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
 ## number of layers is arbitrary
-polymer:::sb_intersection(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
+plot(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick", show_intersection = TRUE)
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-4.png" width="100%" />
 
-A function `n_intersections` will pull out any \>=n overlaps.
+A function `layer_n` will pull out any \>=n overlaps.
 
 ``` r
 
@@ -138,12 +138,8 @@ plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
 sb <- polymer(A, B, C)
-plot(n_intersections(sb), add = TRUE, col = "grey")
-#> Warning in plot.sf(n_intersections(sb), add = TRUE, col = "grey"): ignoring
-#> all but the first attribute
-plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
-#> Warning in plot.sf(n_intersections(sb, n = 3), add = TRUE, col =
-#> "dodgerblue"): ignoring all but the first attribute
+plot(layer_n(sb), add = TRUE, col = "grey")
+plot(layer_n(sb, n = 3), add = TRUE, col = "dodgerblue")
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -151,21 +147,17 @@ plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 ``` r
 
 
-x <- n_intersections(sb, n = 3)
+x <- layer_n(sb, n = 3)
 
 ## see how we know the identity of each input layer
 tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 #> Warning: `cols` is now required.
-#> Please use `cols = c(idx.data)`
-#> # A tibble: 6 x 4
-#>   idx.triangle_idx  path object_ layer
-#>              <int> <int> <chr>   <int>
-#> 1               27     1 fKnsYK     NA
-#> 2               27     5 aeE2XL     NA
-#> 3               27     6 eojWXw     NA
-#> 4               39     1 fKnsYK     NA
-#> 5               39     5 aeE2XL     NA
-#> 6               39     6 eojWXw     NA
+#> Please use `cols = c()`
+#> # A tibble: 2 x 1
+#>      id
+#>   <int>
+#> 1     1
+#> 2     2
 ```
 
 ``` r
@@ -173,9 +165,7 @@ plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
 soil_field <- polymer(soil, field)
-plot(n_intersections(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
-#> Warning in plot.sf(n_intersections(soil_field), add = TRUE, border =
-#> rgb(0.5, : ignoring all but the first attribute
+plot(layer_n(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 ```
 
 <img src="man/figures/README-so-example-1.png" width="100%" />
@@ -202,7 +192,7 @@ library(sf)
 ))
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
 (polb <- polymer(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
-#> SPACE BUCKET:
+#> polymer mesh:
 #> Layers:    5
 #> Polygons:  5
 #> Triangles: 19
@@ -210,12 +200,28 @@ pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5))
 plot(polb, reset = FALSE)
 #> Warning in polypath(head(x$primitives$P[t(cbind(x$primitives$T,
 #> x$primitives$T[, : "reset" is not a graphical parameter
-plot(n_intersections(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
-#> Warning in plot.sf(n_intersections(polb), add = TRUE, col = rgb(0, 0, 0, :
-#> ignoring all but the first attribute
+plot(layer_n(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
 ```
 
 <img src="man/figures/README-over-1.png" width="100%" />
+
+## Background details
+
+The resulting mesh and inputs and indexes can be used to derive complex
+relationships between layers. polymer is modelled on the concept of
+**data fusion** from a now defunct commercial package called Eonfusion.
+It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0,
+but could be modified to use the less restrictive `decido` package.
+Specialist forms of this might choose other engines - the crux is
+constrained triangulation, and for planar shapes high-quality triangles
+aren’t required so long as all inputs edges are preserved.
+
+This is analogous to what GIS packages variously call “overlay”,
+“topology overlay”, “intersection” and so on. The difference is we
+want a single mesh that has information about all of its inputs in a
+lossless form. We can derive general information from the mesh and the
+links to sources without simplifying everything to a single result that
+has no connection to the sources.
 
 -----
 

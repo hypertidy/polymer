@@ -2,26 +2,29 @@
 % Please edit documentation in R/polymer.R
 \name{plot.polymer}
 \alias{plot.polymer}
-\title{Plot the primitive space bucket}
+\title{Plot polymer}
 \usage{
-\method{plot}{polymer}(x, ...)
+\method{plot}{polymer}(x, ..., show_intersection = FALSE)
 }
 \arguments{
 \item{x}{polymer}
 
 \item{...}{arguments to \link{polypath}}
+
+\item{show_intersection}{logical, plot the intersection region contrasted to the pool (default \code{FALSE})}
 }
 \value{
-nothing
+the input, invisibly
 }
 \description{
-Plot the primitive space bucket
+The default plot shows only the mesh. If \code{show_intersection = TRUE}, the part
+of the mesh that has 2 intersecting regions or more is contrasted to the rest.
 }
 \examples{
 plot(polymer(A, B, C))
 library(sf)
 example(st_read)
-x <- nc[1:5, ]
-bucket <- polymer(nc, st_jitter(nc, amount = 0.1))
-plot(bucket)
+nc <- nc[1:5, ]
+x <- polymer(nc, st_jitter(nc, amount = 0.1))
+plot(x)
 }

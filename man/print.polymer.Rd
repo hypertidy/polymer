@@ -2,7 +2,7 @@
 % Please edit documentation in R/polymer.R
 \name{print.polymer}
 \alias{print.polymer}
-\title{Print the primitive space bucket}
+\title{Print polymer}
 \usage{
 \method{print}{polymer}(x, ...)
 }
@@ -15,7 +15,7 @@
 x invisibly
 }
 \description{
-Print a short description of the bucket contents.
+Print a short description of the polymer contents.
 }
 \examples{
 polymer(A, B, C)

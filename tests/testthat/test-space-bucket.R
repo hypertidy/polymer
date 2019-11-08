@@ -1,7 +1,7 @@
-context("test-space-bucket.R")
+context("test-polymer.R")
 
 
-test_that("space bucket works", {
+test_that("polymer works", {
   expect_silent(sb <- polymer(B, C))
   sb %>% expect_s3_class("polymer")
   expect_equal(sort(names(sb)), sort(c("input", "primitives", "geometry_map", "index")))

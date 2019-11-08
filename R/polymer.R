@@ -1,4 +1,4 @@
-#' Space bucket
+#' Polymer
 #'
 #' Convert a collection of sf data frame polygon layers to a single pool
 #' of triangles.
@@ -13,12 +13,12 @@
 #' `index` is the mapping between triangle and path/s
 #' @param ... sf polygon data frame inputs
 #'
-#' @return a spacebucket, see details
-#' @noRd
+#' @return a polymer, see details
+#' @export
 #' @importFrom rlang .data
 #' @examples
-#' spacebucket(A, B, C)
-spacebucket <- function(...) {
+#' polymer(A, B, C)
+polymer <- function(...) {
   ## combine each layer
   inputs <- list(...)
   inputs0 <- lapply(seq_along(inputs),
@@ -51,22 +51,22 @@ spacebucket <- function(...) {
               primitives = RTri,
               geometry_map = paths,
               index = index)
-  class(out) <- "spacebucket"
+  class(out) <- "polymer"
   out
 }
 
 #' Print the primitive space bucket
 #'
 #' Print a short description of the bucket contents.
-#' @param x spacebucket
+#' @param x polymer
 #' @param ... ignored
 #'
 #' @return x invisibly
-#' @noRd
+#' @export
 #'
 #' @examples
-#' spacebucket(A, B, C)
-print.spacebucket <- function(x, ...) {
+#' polymer(A, B, C)
+print.polymer <- function(x, ...) {
   cat("SPACE BUCKET:\n")
   cat(sprintf("Layers:    %i\n", length(x$input)))
   cat(sprintf("Polygons:  %i\n", sum(unlist(lapply(x$input, nrow)))))
@@ -77,21 +77,21 @@ print.spacebucket <- function(x, ...) {
 
 #' Plot the primitive space bucket
 #'
-#' @param x spacebucket
+#' @param x polymer
 #' @param ... arguments to [polypath]
 #'
 #' @return nothing
-#' @noRd
+#' @export
 #' @importFrom graphics plot polypath
 #' @importFrom utils head
 #' @examples
-#' plot(spacebucket(A, B, C))
+#' plot(polymer(A, B, C))
 #' library(sf)
 #' example(st_read)
 #' x <- nc[1:5, ]
-#' bucket <- spacebucket(nc, st_jitter(nc, amount = 0.1))
+#' bucket <- polymer(nc, st_jitter(nc, amount = 0.1))
 #' plot(bucket)
-plot.spacebucket <- function(x, ...) {
+plot.polymer <- function(x, ...) {
   plot(x$primitives$P, pch = ".", asp = 1)
   polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
   invisible(NULL)

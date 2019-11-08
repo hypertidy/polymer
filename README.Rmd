@@ -45,7 +45,6 @@ everything to a single result that has no connection to the sources.
 
 ## WIP
 
-* spacebucket() needs a new name - polymer()?
 * holes are identifiable but not yet explicitly classified
 * extend sb_intersection to return the right parts
 * write sensible return types and input attributes
@@ -72,7 +71,7 @@ plot(sf::st_geometry(B), col = "firebrick", add = TRUE)
 plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 
 ## summarize the contents
-(bucket <- spacebucket(A, B, C))
+(bucket <- polymer(A, B, C))
 
 ## show the components pieces
 plot(bucket, asp = 1)
@@ -85,14 +84,14 @@ to plot the identified triangles - but work to come will identify them individua
 polymer:::sb_intersection(bucket, col = "firebrick")
 
 ## it works with pairs or with multiple layers
-polymer:::sb_intersection(spacebucket(A, B), col = "firebrick")
+polymer:::sb_intersection(polymer(A, B), col = "firebrick")
 
-polymer:::sb_intersection(spacebucket(C, B), col = "firebrick")
+polymer:::sb_intersection(polymer(C, B), col = "firebrick")
 
 
-set.seed(sum(match(unlist(strsplit("spacebucket", "")), letters)))
+set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
 ## number of layers is arbitrary
-polymer:::sb_intersection(spacebucket(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
+polymer:::sb_intersection(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
 
 
 ```
@@ -111,7 +110,7 @@ plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
-sb <- spacebucket(A, B, C)
+sb <- polymer(A, B, C)
 plot(n_intersections(sb), add = TRUE, col = "grey")
 plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 
@@ -126,7 +125,7 @@ tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
-soil_field <- spacebucket(soil, field)
+soil_field <- polymer(soil, field)
 plot(n_intersections(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 ```
 
@@ -151,7 +150,7 @@ library(sf)
  Polygons(list(Polygon(cbind(xpol+.4, ypol+.1))), ID="x5")
 ))
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
-(polb <- spacebucket(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
+(polb <- polymer(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
 plot(polb, reset = FALSE)
 plot(n_intersections(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
 ```

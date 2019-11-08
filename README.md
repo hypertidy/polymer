@@ -41,7 +41,6 @@ has no connection to the sources.
 
 ## WIP
 
-  - spacebucket() needs a new name - polymer()?
   - holes are identifiable but not yet explicitly classified
   - extend sb\_intersection to return the right parts
   - write sensible return types and input attributes
@@ -73,7 +72,7 @@ plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 ``` r
 
 ## summarize the contents
-(bucket <- spacebucket(A, B, C))
+(bucket <- polymer(A, B, C))
 #> SPACE BUCKET:
 #> Layers:    3
 #> Polygons:  6
@@ -100,14 +99,14 @@ polymer:::sb_intersection(bucket, col = "firebrick")
 ``` r
 
 ## it works with pairs or with multiple layers
-polymer:::sb_intersection(spacebucket(A, B), col = "firebrick")
+polymer:::sb_intersection(polymer(A, B), col = "firebrick")
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-2.png" width="100%" />
 
 ``` r
 
-polymer:::sb_intersection(spacebucket(C, B), col = "firebrick")
+polymer:::sb_intersection(polymer(C, B), col = "firebrick")
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-3.png" width="100%" />
@@ -115,9 +114,9 @@ polymer:::sb_intersection(spacebucket(C, B), col = "firebrick")
 ``` r
 
 
-set.seed(sum(match(unlist(strsplit("spacebucket", "")), letters)))
+set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
 ## number of layers is arbitrary
-polymer:::sb_intersection(spacebucket(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
+polymer:::sb_intersection(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick")
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-4.png" width="100%" />
@@ -138,7 +137,7 @@ plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
-sb <- spacebucket(A, B, C)
+sb <- polymer(A, B, C)
 plot(n_intersections(sb), add = TRUE, col = "grey")
 #> Warning in plot.sf(n_intersections(sb), add = TRUE, col = "grey"): ignoring
 #> all but the first attribute
@@ -161,19 +160,19 @@ tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 #> # A tibble: 6 x 4
 #>   idx.triangle_idx  path object_ layer
 #>              <int> <int> <chr>   <int>
-#> 1               27     1 W9erlW     NA
-#> 2               27     5 U0UPUI     NA
-#> 3               27     6 p9902a     NA
-#> 4               39     1 W9erlW     NA
-#> 5               39     5 U0UPUI     NA
-#> 6               39     6 p9902a     NA
+#> 1               27     1 fKnsYK     NA
+#> 2               27     5 aeE2XL     NA
+#> 3               27     6 eojWXw     NA
+#> 4               39     1 fKnsYK     NA
+#> 5               39     5 aeE2XL     NA
+#> 6               39     6 eojWXw     NA
 ```
 
 ``` r
 plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
-soil_field <- spacebucket(soil, field)
+soil_field <- polymer(soil, field)
 plot(n_intersections(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 #> Warning in plot.sf(n_intersections(soil_field), add = TRUE, border =
 #> rgb(0.5, : ignoring all but the first attribute
@@ -202,7 +201,7 @@ library(sf)
  Polygons(list(Polygon(cbind(xpol+.4, ypol+.1))), ID="x5")
 ))
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
-(polb <- spacebucket(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
+(polb <- polymer(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
 #> SPACE BUCKET:
 #> Layers:    5
 #> Polygons:  5

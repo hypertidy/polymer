@@ -3,7 +3,10 @@
 \docType{package}
 \name{polymer-package}
 \alias{polymer-package}
-\title{behold the spacebucket.}
+\title{Polymer}
 \description{
-behold the spacebucket.
+Find overlapping polygons regions by converting a collection of sf
+data frame polygon layers to a single pool of triangles. The pool
+is used for subsequent queries, what layers intersect and how, maintaining
+links to input data of all layers.
 }

@@ -7,7 +7,7 @@
 n_intersections(x, n = 2, ...)
 }
 \arguments{
-\item{x}{spacebucket}
+\item{x}{polymer}
 
 \item{n}{minimum number of intersections to keep}
 
@@ -29,7 +29,7 @@ plot(A["layer"], reset = TRUE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 
-sb <- spacebucket(A, B, C)
+sb <- polymer(A, B, C)
 plot(n_intersections(sb), add = TRUE, col = "grey")
 plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 }

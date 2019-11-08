@@ -18,7 +18,7 @@ sb_intersection <- function(x, ...) {
 #' Returns a simple features data frame with all triangles that occur `n` times with
 #' `n = 2` as a minimum. Each triangle feature contains a nested data frame in `idx`
 #' that keeps the links to the input layers by `layer`, `object` and `path`.
-#' @param x spacebucket
+#' @param x polymer
 #' @param n minimum number of intersections to keep
 #' @param ... ignored for now
 #'
@@ -30,7 +30,7 @@ sb_intersection <- function(x, ...) {
 #' plot(B, add = TRUE, col = "hotpink")
 #' plot(C, add = TRUE, col = "firebrick")
 #'
-#' sb <- spacebucket(A, B, C)
+#' sb <- polymer(A, B, C)
 #' plot(n_intersections(sb), add = TRUE, col = "grey")
 #' plot(n_intersections(sb, n = 3), add = TRUE, col = "dodgerblue")
 n_intersections <- function(x, n = 2, ...) {

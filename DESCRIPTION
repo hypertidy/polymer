@@ -1,7 +1,9 @@
 Package: polymer
 Title: Flexible and Intuitive Overlay Methods
 Version: 0.2.0
-Authors@R: person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre"))
+Authors@R: c(
+ person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre")), 
+ person("Gabriel", "Becker", role = "ctb", comment = "Provided the package name."))
 Description: General intersections via a triangle pool from disparate polygon inputs. Overlap is
  determined via finite-element decomposition of all component edges in all inputs into triangles. 
  Then triangles instances are classified (by point-in-polygon lookup) by objects within layers. 

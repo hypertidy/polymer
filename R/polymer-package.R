@@ -6,8 +6,12 @@
 #' @aliases soil
 NULL
 
-#' behold the spacebucket.
+#' Polymer
 #'
+#' Find overlapping polygons regions by converting a collection of sf
+#' data frame polygon layers to a single pool of triangles. The pool
+#' is used for subsequent queries, what layers intersect and how, maintaining
+#' links to input data of all layers.
 #' @name polymer-package
 #' @docType package
 #' @importFrom sf st_geometry

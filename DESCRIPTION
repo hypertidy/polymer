@@ -27,8 +27,6 @@ Imports:
 Suggests: 
     covr,
     testthat
-Remotes: 
-    mdsumner/gibble
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

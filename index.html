@@ -69,13 +69,16 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-
+<hr>
+<p>output: github_document editor_options: chunk_output_type: console —</p>
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<p><a href="https://travis-ci.org/mdsumner/polymer"><img src="https://travis-ci.org/mdsumner/polymer.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/mdsumner/polymer"><img src="https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/github/mdsumner/polymer?branch=master"><img src="https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg" alt="Coverage status"></a></p>
 <div id="polymer" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#polymer" class="anchor"></a>polymer</h1></div>
-<p>The goal of polymer is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works via finite-element decomposition of all component edges in all inputs into triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
+<p>The goal of polymer is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works via finite-element decomposition of all component edges in all inputs as triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
 <p>An example. This plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes.</p>
-<p><img src="reference/figures/README-panels-1.png" width="100%"></p>
+<p><img src="reference/figures/README-panels-1.png" title="plot of chunk panels" alt="plot of chunk panels" width="100%"></p>
 <p>There are two functions:</p>
 <ul>
 <li>
@@ -109,7 +112,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/sf/man/st_geometry.html">st_geometry</a></span>(A), <span class="dt">col =</span> viridis<span class="op">::</span><span class="kw">viridis</span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(A)))</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/sf/man/st_geometry.html">st_geometry</a></span>(B), <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/sf/man/st_geometry.html">st_geometry</a></span>(C), <span class="dt">col =</span> <span class="st">"dodgerblue"</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-example-1.png" width="100%"></p>
+<p><img src="reference/figures/README-example-1.png" title="plot of chunk example" alt="plot of chunk example" width="100%"></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">## summarize the contents</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">(pool &lt;-<span class="st"> </span><span class="kw"><a href="reference/polymer.html">polymer</a></span>(A, B, C))</a>
@@ -121,29 +124,29 @@
 <a class="sourceLine" id="cb3-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10">## show the components pieces</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(pool, <span class="dt">asp =</span> <span class="dv">1</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-example-2.png" width="100%"></p>
+<p><img src="reference/figures/README-example-2.png" title="plot of chunk example" alt="plot of chunk example" width="100%"></p>
 <p>The next stage is to then pull out the intersection layer, currently we only have a function to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(pool, <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">show_intersection =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%"></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">## it works with pairs or with multiple layers</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/polymer.html">polymer</a></span>(A, B), <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">show_intersection =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-1-2.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-1-2.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/polymer.html">polymer</a></span>(C, B), <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">show_intersection =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-1-3.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-1-3.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/match.html">match</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="st">"polymer"</span>, <span class="st">""</span>)), letters)))</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4">## number of layers is arbitrary</a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/polymer.html">polymer</a></span>(C, B, A, sf<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/sf/man/st_jitter.html">st_jitter</a></span>(A, <span class="fl">0.1</span>)), <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">show_intersection =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-1-4.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-1-4.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%"></p>
 <p>A function <code>layer_n</code> will pull out any &gt;=n overlaps.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(A[<span class="st">"layer"</span>], <span class="dt">col =</span> viridis<span class="op">::</span><span class="kw">viridis</span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(A)), <span class="dt">reset =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(B, <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"hotpink"</span>)</a>
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(C, <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"firebrick"</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-nintersections-1.png" width="100%"></p>
+<p><img src="reference/figures/README-nintersections-1.png" title="plot of chunk nintersections" alt="plot of chunk nintersections" width="100%"></p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(A[<span class="st">"layer"</span>], <span class="dt">col =</span> viridis<span class="op">::</span><span class="kw">viridis</span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(A)), <span class="dt">reset =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(B, <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"hotpink"</span>)</a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(C, <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"firebrick"</span>)</a>
@@ -151,7 +154,7 @@
 <a class="sourceLine" id="cb9-5" data-line-number="5">sb &lt;-<span class="st"> </span><span class="kw"><a href="reference/polymer.html">polymer</a></span>(A, B, C)</a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(sb), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"grey"</span>)</a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(sb, <span class="dt">n =</span> <span class="dv">3</span>), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="st">"dodgerblue"</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="100%"></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">x &lt;-<span class="st"> </span><span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(sb, <span class="dt">n =</span> <span class="dv">3</span>)</a>
@@ -170,11 +173,11 @@
 <a class="sourceLine" id="cb11-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4">soil_field &lt;-<span class="st"> </span><span class="kw"><a href="reference/polymer.html">polymer</a></span>(soil, field)</a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(soil_field), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">border =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>))</a></code></pre></div>
-<p><img src="reference/figures/README-so-example-1.png" width="100%"></p>
+<p><img src="reference/figures/README-so-example-1.png" title="plot of chunk so-example" alt="plot of chunk so-example" width="100%"></p>
 <p>From <code>vignette("over", package = "sp")</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(sp)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(sf)</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Linking to GEOS 3.7.1, GDAL 2.4.2, PROJ 5.2.0</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"> x =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.5</span>)</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"> y =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>)</a>
 <a class="sourceLine" id="cb12-6" data-line-number="6"> xy =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(x,y)</a>
@@ -197,10 +200,9 @@
 <a class="sourceLine" id="cb12-23" data-line-number="23"><span class="co">#&gt; Triangles: 19</span></a>
 <a class="sourceLine" id="cb12-24" data-line-number="24"><span class="co">#&gt; (Overlaps: 4)</span></a>
 <a class="sourceLine" id="cb12-25" data-line-number="25"><span class="kw"><a href="https://rdrr.io/pkg/sf/man/plot.html">plot</a></span>(polb, <span class="dt">reset =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb12-26" data-line-number="26"><span class="co">#&gt; Warning in polypath(head(x$primitives$P[t(cbind(x$primitives$T,</span></a>
-<a class="sourceLine" id="cb12-27" data-line-number="27"><span class="co">#&gt; x$primitives$T[, : "reset" is not a graphical parameter</span></a>
-<a class="sourceLine" id="cb12-28" data-line-number="28"><span class="kw"><a href="https://rdrr.io/pkg/sf/man/plot.html">plot</a></span>(<span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(polb), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.3</span>), <span class="dt">border =</span> <span class="st">"firebrick"</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</a></code></pre></div>
-<p><img src="reference/figures/README-over-1.png" width="100%"></p>
+<a class="sourceLine" id="cb12-26" data-line-number="26"><span class="co">#&gt; Warning in polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[, : "reset" is not a graphical parameter</span></a>
+<a class="sourceLine" id="cb12-27" data-line-number="27"><span class="kw"><a href="https://rdrr.io/pkg/sf/man/plot.html">plot</a></span>(<span class="kw"><a href="reference/layer_n.html">layer_n</a></span>(polb), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.3</span>), <span class="dt">border =</span> <span class="st">"firebrick"</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><img src="reference/figures/README-over-1.png" title="plot of chunk over" alt="plot of chunk over" width="100%"></p>
 </div>
 <div id="background-details" class="section level2">
 <h2 class="hasAnchor">
@@ -244,15 +246,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/mdsumner/polymer"><img src="https://travis-ci.org/mdsumner/polymer.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://ci.appveyor.com/project/mdsumner/polymer"><img src="https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
-<li><a href="https://codecov.io/github/mdsumner/polymer?branch=master"><img src="https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 

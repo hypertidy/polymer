@@ -11,20 +11,21 @@ status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](h
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
-familiar to GIS workflows. This works via finite-element decomposition
-of all component edges in all inputs as triangles. Then triangles
-*instances* are classified (by point-in-polygon lookup) by inclusion
-within paths within objects within layers.
+(familiar to GIS workflows) but with any number of input layers.
 
-An example. This plot on the left shows 3 overlapping polygon layers,
-four squares on the bottom, then a single triangle, and then a blue
-elongated rectangle. The next panel shows the entire mesh with every
-input edge included, the purple region has two overlappping polygons,
-the grey region has three. We can distinguish the various layers by what
-parts of the plane they occupy, with finite elements that collectively
-capture the input shapes.
+The plot on the left shows 3 overlapping polygon layers, four squares on
+the bottom, then a single triangle, and then a blue elongated rectangle.
+The next panel shows the entire mesh with every input edge included, the
+purple region has two overlappping polygons, the grey region has three.
+We can distinguish the various layers by what parts of the plane they
+occupy, with finite elements that collectively capture the input shapes.
 
 <img src="man/figures/README-panels-1.png" width="100%" />
+
+This works via finite-element decomposition of all component edges in
+all inputs as triangles. Triangle *instances* are classified (by
+point-in-polygon lookup) by inclusion within paths within objects within
+layers.
 
 There are two functions:
 
@@ -38,9 +39,9 @@ and
 [plot](https://mdsumner.github.io/polymer/reference/plot.polymer.html%5D)
 methods for the polymer pool.
 
-We currently ***don’t*** keep the input layers linked in the output from
-`layer_n()` but this will be a key feature in future versions. (You can
-set an argument to keep them if you are adventurous). We need some
+We currently ***do not*** keep the input layers linked in the output
+from `layer_n()` but this will be a key feature in future versions. (You
+can set an argument to keep them if you are adventurous). We need some
 intermediate forms because sf itself cannot store multi-relations
 without duplicating geometries.
 
@@ -52,8 +53,7 @@ without duplicating geometries.
 
 ## Installation
 
-You can install the development version from
-[GitHub](https://github.com/) with:
+Install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -90,10 +90,10 @@ plot(pool, asp = 1)
 
 <img src="man/figures/README-example-2.png" width="100%" />
 
-The next stage is to then pull out the intersection layer, currently we
-only have a function to plot the identified triangles - but work to come
-will identify them individually and copy attributes from the input
-layers appropriately.
+The next stage pulls out the intersection layer, currently we only have
+a function to plot the identified triangles - but work to come will
+identify them individually and copy attributes from the input layers
+appropriately.
 
 ``` r
 plot(pool, col = "firebrick", show_intersection = TRUE)

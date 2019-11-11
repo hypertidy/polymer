@@ -1,59 +1,50 @@
+---
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis build
-status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer)
-[![Coverage
-status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
+[![Travis build status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer) [![Coverage status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
+
+
+
 
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
-familiar to GIS workflows. This works via finite-element decomposition
-of all component edges in all inputs into triangles. Then triangles
-*instances* are classified (by point-in-polygon lookup) by inclusion
+familiar to GIS workflows. This works via finite-element
+decomposition of all component edges in all inputs as triangles. Then
+triangles *instances* are classified (by point-in-polygon lookup) by inclusion
 within paths within objects within layers.
 
-An example. This plot on the left shows 3 overlapping polygon layers,
-four squares on the bottom, then a single triangle, and then a blue
-elongated rectangle. The next panel shows the entire mesh with every
-input edge included, the purple region has two overlappping polygons,
-the grey region has three. We can distinguish the various layers by what
-parts of the plane they occupy, with finite elements that collectively
-capture the input shapes.
+An example. This plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel
+shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes. 
 
-<img src="man/figures/README-panels-1.png" width="100%" />
+<img src="man/figures/README-panels-1.png" title="plot of chunk panels" alt="plot of chunk panels" width="100%" />
 
-There are two functions:
 
-  - `polymer()` build the triangle pool from 1 or more input layers
-  - `layer_n()` extract a simple features layer composed of n-overlaps
-    from the inputs to `polymer()` (default is 2)
+There are two functions: 
 
-There are
-[print](https://mdsumner.github.io/polymer/reference/print.polymer.html)
-and
-[plot](https://mdsumner.github.io/polymer/reference/plot.polymer.html%5D)
-methods for the polymer pool.
+* `polymer()` build the triangle pool from 1 or more input layers
+* `layer_n()` extract a simple features layer composed of n-overlaps from the inputs to `polymer()` (default is 2)
 
-We currently ***don’t*** keep the input layers linked in the output from
-`layer_n()` but this will be a key feature in future versions. (You can
-set an argument to keep them if you are adventurous). We need some
-intermediate forms because sf itself cannot store multi-relations
-without duplicating geometries.
+There are [print](https://mdsumner.github.io/polymer/reference/print.polymer.html) and [plot](https://mdsumner.github.io/polymer/reference/plot.polymer.html]) methods for the polymer pool. 
+
+We currently ***don't*** keep the input layers linked in the output from `layer_n()` but this will be a key feature in future versions. (You can set an argument to keep them if you are adventurous). We need some intermediate forms because sf itself cannot store multi-relations without duplicating geometries.  
 
 ## WIP
 
-  - holes are identifiable but not yet explicitly classified
-  - extend sb\_intersection to return the right parts
-  - write sensible return types and include nput attributes
+* holes are identifiable but not yet explicitly classified
+* extend sb_intersection to return the right parts
+* write sensible return types and include nput attributes
+
+
 
 ## Installation
 
-You can install the development version from
-[GitHub](https://github.com/) with:
+You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -62,19 +53,19 @@ devtools::install_github("mdsumner/polymer")
 
 ## Example
 
-This example takes three built in data sets and merges them together as
-an indexed mesh.
+This example takes three built in data sets and merges them together as an indexed mesh. 
 
-``` r
+
+```r
 library(polymer)
 plot(sf::st_geometry(A), col = viridis::viridis(nrow(A)))
 plot(sf::st_geometry(B), col = "firebrick", add = TRUE)
 plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-example-1.png" title="plot of chunk example" alt="plot of chunk example" width="100%" />
 
-``` r
+```r
 
 ## summarize the contents
 (pool <- polymer(A, B, C))
@@ -88,35 +79,34 @@ plot(sf::st_geometry(C), col = "dodgerblue", add = TRUE)
 plot(pool, asp = 1)
 ```
 
-<img src="man/figures/README-example-2.png" width="100%" />
+<img src="man/figures/README-example-2.png" title="plot of chunk example" alt="plot of chunk example" width="100%" />
 
-The next stage is to then pull out the intersection layer, currently we
-only have a function to plot the identified triangles - but work to come
-will identify them individually and copy attributes from the input
-layers appropriately.
+The next stage is to then pull out the intersection layer, currently we only have a function
+to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately. 
 
-``` r
+
+```r
 plot(pool, col = "firebrick", show_intersection = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%" />
 
-``` r
+```r
 
 ## it works with pairs or with multiple layers
 plot(polymer(A, B), col = "firebrick", show_intersection = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-1-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-1-2.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%" />
 
-``` r
+```r
 
 plot(polymer(C, B), col = "firebrick", show_intersection = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-1-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-1-3.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%" />
 
-``` r
+```r
 
 
 set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
@@ -124,20 +114,22 @@ set.seed(sum(match(unlist(strsplit("polymer", "")), letters)))
 plot(polymer(C, B, A, sf::st_jitter(A, 0.1)), col = "firebrick", show_intersection = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-1-4.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-1-4.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="100%" />
 
-A function `layer_n` will pull out any \>=n overlaps.
 
-``` r
+A function `layer_n` will pull out any >=n overlaps. 
+
+
+```r
 
 plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
 ```
 
-<img src="man/figures/README-nintersections-1.png" width="100%" />
+<img src="man/figures/README-nintersections-1.png" title="plot of chunk nintersections" alt="plot of chunk nintersections" width="100%" />
 
-``` r
+```r
 plot(A["layer"], col = viridis::viridis(nrow(A)), reset = FALSE)
 plot(B, add = TRUE, col = "hotpink")
 plot(C, add = TRUE, col = "firebrick")
@@ -147,9 +139,9 @@ plot(layer_n(sb), add = TRUE, col = "grey")
 plot(layer_n(sb, n = 3), add = TRUE, col = "dodgerblue")
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="100%" />
 
-``` r
+```r
 
 
 x <- layer_n(sb, n = 3)
@@ -165,7 +157,8 @@ tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 #> 2     2
 ```
 
-``` r
+
+```r
 plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
 plot(field, add = TRUE, col = NA)
 
@@ -173,14 +166,16 @@ soil_field <- polymer(soil, field)
 plot(layer_n(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 ```
 
-<img src="man/figures/README-so-example-1.png" width="100%" />
+<img src="man/figures/README-so-example-1.png" title="plot of chunk so-example" alt="plot of chunk so-example" width="100%" />
 
-From `vignette("over", package = "sp")`.
 
-``` r
+From `vignette("over", package = "sp")`. 
+
+
+```r
  library(sp)
 library(sf)
-#> Linking to GEOS 3.7.1, GDAL 2.4.2, PROJ 5.2.0
+#> Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3
  x = c(0.5, 0.5, 1.0, 1.5)
  y = c(1.5, 0.5, 0.5, 0.5)
  xy = cbind(x,y)
@@ -203,34 +198,28 @@ pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5))
 #> Triangles: 19
 #> (Overlaps: 4)
 plot(polb, reset = FALSE)
-#> Warning in polypath(head(x$primitives$P[t(cbind(x$primitives$T,
-#> x$primitives$T[, : "reset" is not a graphical parameter
+#> Warning in polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[, : "reset" is not a graphical parameter
 plot(layer_n(polb), add = TRUE, col = rgb(0, 0, 0, 0.3), border = "firebrick", lwd = 2)
 ```
 
-<img src="man/figures/README-over-1.png" width="100%" />
+<img src="man/figures/README-over-1.png" title="plot of chunk over" alt="plot of chunk over" width="100%" />
 
-## Background details
+## Background details 
 
 The resulting mesh and inputs and indexes can be used to derive complex
-relationships between layers. polymer is modelled on the concept of
-**data fusion** from a now defunct commercial package called Eonfusion.
-It relies on the RTriangle package which is licensed CC BY-NC-SA 4.0,
-but could be modified to use the less restrictive `decido` package.
-Specialist forms of this might choose other engines - the crux is
-constrained triangulation, and for planar shapes high-quality triangles
-aren’t required so long as all inputs edges are preserved.
+relationships between layers. polymer is modelled on the concept of **data
+fusion** from a now defunct commercial package called Eonfusion. It relies on
+the RTriangle package which is licensed CC BY-NC-SA 4.0, but could be modified
+to use the less restrictive `decido` package. Specialist forms of this might
+choose other engines - the crux is constrained triangulation, and for planar shapes high-quality triangles aren't required so long as all inputs edges are preserved. 
 
-This is analogous to what GIS packages variously call “overlay”,
-“topology overlay”, “intersection” and so on. The difference is we
-want a single mesh that has information about all of its inputs in a
-lossless form. We can derive general information from the mesh and the
-links to sources without simplifying everything to a single result that
-has no connection to the sources.
+This is analogous to what GIS packages variously call "overlay", "topology
+overlay", "intersection" and so on. The difference is we want a single mesh that
+has information about all of its inputs in a lossless form. We can derive
+general information from the mesh and the links to sources without simplifying
+everything to a single result that has no connection to the sources.
 
------
 
-Please note that the polymer project is released with a [Contributor
-Code of
-Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html).
-By contributing to this project, you agree to abide by its terms.
+---
+
+Please note that the polymer project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

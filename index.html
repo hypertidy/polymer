@@ -73,9 +73,10 @@
 <div id="polymer" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#polymer" class="anchor"></a>polymer</h1></div>
-<p>The goal of polymer is to provide flexible and intuitive overlay methods familiar to GIS workflows. This works via finite-element decomposition of all component edges in all inputs as triangles. Then triangles <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
-<p>An example. This plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes.</p>
+<p>The goal of polymer is to provide flexible and intuitive overlay methods (familiar to GIS workflows) but with any number of input layers.</p>
+<p>The plot on the left shows 3 overlapping polygon layers, four squares on the bottom, then a single triangle, and then a blue elongated rectangle. The next panel shows the entire mesh with every input edge included, the purple region has two overlappping polygons, the grey region has three. We can distinguish the various layers by what parts of the plane they occupy, with finite elements that collectively capture the input shapes.</p>
 <p><img src="reference/figures/README-panels-1.png" width="100%"></p>
+<p>This works via finite-element decomposition of all component edges in all inputs as triangles. Triangle <em>instances</em> are classified (by point-in-polygon lookup) by inclusion within paths within objects within layers.</p>
 <p>There are two functions:</p>
 <ul>
 <li>
@@ -84,7 +85,7 @@
 <code><a href="reference/layer_n.html">layer_n()</a></code> extract a simple features layer composed of n-overlaps from the inputs to <code><a href="reference/polymer.html">polymer()</a></code> (default is 2)</li>
 </ul>
 <p>There are <a href="https://mdsumner.github.io/polymer/reference/print.polymer.html">print</a> and <a href="https://mdsumner.github.io/polymer/reference/plot.polymer.html%5D">plot</a> methods for the polymer pool.</p>
-<p>We currently <strong><em>don’t</em></strong> keep the input layers linked in the output from <code><a href="reference/layer_n.html">layer_n()</a></code> but this will be a key feature in future versions. (You can set an argument to keep them if you are adventurous). We need some intermediate forms because sf itself cannot store multi-relations without duplicating geometries.</p>
+<p>We currently <strong><em>do not</em></strong> keep the input layers linked in the output from <code><a href="reference/layer_n.html">layer_n()</a></code> but this will be a key feature in future versions. (You can set an argument to keep them if you are adventurous). We need some intermediate forms because sf itself cannot store multi-relations without duplicating geometries.</p>
 <div id="wip" class="section level2">
 <h2 class="hasAnchor">
 <a href="#wip" class="anchor"></a>WIP</h2>
@@ -97,7 +98,7 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<p>Install the development version from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"mdsumner/polymer"</span>)</a></code></pre></div>
 </div>
@@ -122,7 +123,7 @@
 <a class="sourceLine" id="cb3-10" data-line-number="10">## show the components pieces</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(pool, <span class="dt">asp =</span> <span class="dv">1</span>)</a></code></pre></div>
 <p><img src="reference/figures/README-example-2.png" width="100%"></p>
-<p>The next stage is to then pull out the intersection layer, currently we only have a function to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately.</p>
+<p>The next stage pulls out the intersection layer, currently we only have a function to plot the identified triangles - but work to come will identify them individually and copy attributes from the input layers appropriately.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(pool, <span class="dt">col =</span> <span class="st">"firebrick"</span>, <span class="dt">show_intersection =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"></a>

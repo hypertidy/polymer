@@ -1,6 +1,6 @@
 Package: polymer
 Title: Flexible and Intuitive Overlay Methods
-Version: 0.2.0
+Version: 0.2.0.9001
 Authors@R: c(
  person("Michael", "Sumner", email = "mdsumner@gmail.com", role = c("aut", "cre")), 
  person("Gabriel", "Becker", role = "ctb", comment = "Provided the package name."))

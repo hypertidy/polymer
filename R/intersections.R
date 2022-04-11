@@ -37,6 +37,7 @@ layer_n <- function(x, n = 2, ..., keep_index = FALSE) {
     dplyr::transmute(path = .data$path_, .data$triangle_idx)
   gmap <- x$geometry_map %>%
     dplyr::select(.data$object_, .data$layer, .data$path)
+  gmap$path <- as.character(gmap$path)
   ## every unique triangle keeps a record of which path, object, layer
           ## (a bit of redundancy until we get a single path/object index or ...)
   idx <- purrr::map_df(split(triangles, triangles$triangle_idx),

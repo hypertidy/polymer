@@ -38,10 +38,9 @@ extents.PATH <- function(x) {
 
 pfft_edge_RTriangle <- function (x, ...)
 {
-  ps <- RTriangle::pslg(P = as.matrix(x[["vertex"]][c("x_",
-                                                      "y_")]), S = matrix(match(silicate::sc_edge(x) %>% dplyr::select(.data$.vx0,
-                                                                                                                       .data$.vx1) %>% as.matrix() %>% t() %>% as.vector(),
-                                                                                x[["vertex"]][["vertex_"]]), ncol = 2, byrow = TRUE))
+  ps <- RTriangle::pslg(P = as.matrix(silicate::sc_vertex(x)[c("x_","y_")]), S = matrix(t(as.matrix(
+                                                        silicate::sc_edge(x)[c(".vx0", ".vx1")])),
+                                                                                ncol = 2L, byrow = TRUE))
   RTriangle::triangulate(ps, ...)
 }
 
@@ -51,14 +50,15 @@ pfft_path_triangle_map <- function (x, RTri)
   ], rep(seq(nrow(RTri$T)), each = 3)), .colMeans, 3, 2)),
   ncol = 2, byrow = TRUE)
   ex <- extents(x)
-  gm <- x[["path"]]
+  gm <- gibble::gibble(x) ##x[["path"]]
   pipmap <- split(ex, ex$path_)[unique(ex$path_)] %>% purrr::map(~(centroids[,
                                                                              1] >= .x[["xmn"]] & centroids[, 1] <= .x[["xmx"]] & centroids[,
                                                                                                                                            2] >= .x[["ymn"]] & centroids[, 2] <= .x[["ymx"]]))
-  pipmap <- pipmap[gm$path_]
+
+  pipmap <- pipmap[as.character(1:nrow(gm))]
   len <- purrr::map_int(pipmap, sum)
   lc <- split(silicate::sc_coord(x), rep(seq_len(nrow(gm)),
-                                         gm$ncoords_))
+                                         gm$nrow))
   pip <- pipmap
   for (i in seq_along(pipmap)) {
     if (len[i] > 0) {
@@ -70,6 +70,7 @@ pfft_path_triangle_map <- function (x, RTri)
       pip[[i]][] <- FALSE
     }
   }
+
   ix <- lapply(pip, which)
-  tibble::tibble(path_ = rep(names(ix), lengths(ix)), triangle_idx = unlist(ix))
+  tibble::tibble(path_ = rep(names(ix), lengths(ix)), triangle_idx = unlist(ix, use.names = F))
 }

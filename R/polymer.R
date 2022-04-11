@@ -40,7 +40,7 @@ polymer <- function(...) {
   ## TODO1
   ## triangulate the mesh
   sfall <- do.call(rbind, inputs0)
-  path <- silicate::PATH(sfall)
+  path <- silicate::PATH0(sfall)
   RTri <- pfft_edge_RTriangle(path)
 
   ## TODO2
@@ -50,11 +50,12 @@ polymer <- function(...) {
   ## TODO3
   ## sort out common CRS for inputs
 
-  index <-   map %>% dplyr::mutate(path_ = match(.data$path_, path$path$path_))
-  paths <- path[["path"]] %>%
+  index <-   map #%>% dplyr::mutate(path_ = match(.data$path_, path$path$path_))
+
+  paths <- gibble::gibble(path)%>%
     dplyr::transmute(.data$subobject,
-                     .data$object_,
-                     .data$ncoords_,
+                     object_ = .data$object,
+                     ncoords_ = .data$nrow,
                      path = dplyr::row_number())
 
   layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))

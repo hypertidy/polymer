@@ -6,8 +6,9 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis build status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer) [![Coverage status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
-
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/hypertidy/polymer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hypertidy/polymer/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(

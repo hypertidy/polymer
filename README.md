@@ -1,13 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis build
-status](https://travis-ci.org/mdsumner/polymer.svg?branch=master)](https://travis-ci.org/mdsumner/polymer)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/mdsumner/polymer?branch=master&svg=true)](https://ci.appveyor.com/project/mdsumner/polymer)
-[![Coverage
-status](https://codecov.io/gh/mdsumner/polymer/branch/master/graph/badge.svg)](https://codecov.io/github/mdsumner/polymer?branch=master)
-
 # polymer
 
 The goal of polymer is to provide flexible and intuitive overlay methods
@@ -29,9 +22,9 @@ layers.
 
 There are two functions:
 
-  - `polymer()` build the triangle pool from 1 or more input layers
-  - `layer_n()` extract a simple features layer composed of n-overlaps
-    from the inputs to `polymer()` (default is 2)
+- `polymer()` build the triangle pool from 1 or more input layers
+- `layer_n()` extract a simple features layer composed of n-overlaps
+  from the inputs to `polymer()` (default is 2)
 
 There are
 [print](https://mdsumner.github.io/polymer/reference/print.polymer.html)
@@ -47,9 +40,9 @@ without duplicating geometries.
 
 ## WIP
 
-  - holes are identifiable but not yet explicitly classified
-  - extend sb\_intersection to return the right parts
-  - write sensible return types and include nput attributes
+- holes are identifiable but not yet explicitly classified
+- extend sb_intersection to return the right parts
+- write sensible return types and include nput attributes
 
 ## Installation
 
@@ -156,9 +149,9 @@ x <- layer_n(sb, n = 3)
 
 ## see how we know the identity of each input layer
 tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
-#> Warning: `cols` is now required.
+#> Warning: `cols` is now required when using unnest().
 #> Please use `cols = c()`
-#> # A tibble: 2 x 1
+#> # A tibble: 2 × 1
 #>      id
 #>   <int>
 #> 1     1
@@ -167,9 +160,23 @@ tibble::as_tibble(x) %>%  dplyr::select(-geometry) %>% tidyr::unnest()
 
 ``` r
 plot(soil, col = sf::sf.colors(n = nrow(soil)), border = NA, reset = FALSE)
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
 plot(field, add = TRUE, col = NA)
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
 
 soil_field <- polymer(soil, field)
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
 plot(layer_n(soil_field), add = TRUE, border = rgb(0.5, 0.5, 0.5, 0.2))
 ```
 
@@ -180,7 +187,10 @@ From `vignette("over", package = "sp")`.
 ``` r
  library(sp)
 library(sf)
-#> Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3
+#> Linking to GEOS 3.10.2, GDAL 3.4.3, PROJ 8.2.0; sf_use_s2() is TRUE
+#> WARNING: different compile-time and runtime versions for GEOS found:
+#> Linked against: 3.10.2-CAPI-1.16.0 compiled against: 3.10.1-CAPI-1.16.0
+#> It is probably a good idea to reinstall sf, and maybe rgeos and rgdal too
  x = c(0.5, 0.5, 1.0, 1.5)
  y = c(1.5, 0.5, 0.5, 0.5)
  xy = cbind(x,y)
@@ -196,6 +206,8 @@ library(sf)
  Polygons(list(Polygon(cbind(xpol+.4, ypol+.1))), ID="x5")
 ))
 pol <- st_as_sf(SpatialPolygonsDataFrame(disaggregate(pol), data.frame(a = 1:5)))
+#> Warning in fun(libname, pkgname): rgeos: versions of GEOS runtime 3.10.2-CAPI-1.16.0
+#> and GEOS at installation 3.10.1-CAPI-1.16.0differ
 (polb <- polymer(pol[1, ], pol[2, ], pol[3, ], pol[4, ], pol[5, ]))
 #> polymer mesh:
 #> Layers:    5
@@ -222,13 +234,13 @@ constrained triangulation, and for planar shapes high-quality triangles
 aren’t required so long as all inputs edges are preserved.
 
 This is analogous to what GIS packages variously call “overlay”,
-“topology overlay”, “intersection” and so on. The difference is we
-want a single mesh that has information about all of its inputs in a
-lossless form. We can derive general information from the mesh and the
-links to sources without simplifying everything to a single result that
-has no connection to the sources.
+“topology overlay”, “intersection” and so on. The difference is we want
+a single mesh that has information about all of its inputs in a lossless
+form. We can derive general information from the mesh and the links to
+sources without simplifying everything to a single result that has no
+connection to the sources.
 
------
+------------------------------------------------------------------------
 
 Please note that the polymer project is released with a [Contributor
 Code of

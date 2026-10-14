@@ -5,5 +5,7 @@ S3method(print,polymer)
 export(fuse)
 export(layer_n)
 export(polymer)
-importFrom(graphics,plot)
-importFrom(graphics,polygon)
+importFrom(graphics,
+  plot,
+  polygon
+)

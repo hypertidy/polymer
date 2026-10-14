@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/hypertidy/polymer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hypertidy/polymer/actions/workflows/R-CMD-check.yaml)
@@ -20,7 +21,7 @@ The plot on the left shows three overlapping layers: four squares, a
 triangle, and a thin rectangle. On the right is the polymer mesh, with
 the triangles covered more than once filled in.
 
-<img src="man/figures/README-panels-1.png" width="100%" />
+<img src="man/figures/README-panels-1.png" alt="" width="100%" />
 
 ## Installation
 
@@ -39,8 +40,8 @@ remotes::install_github("hypertidy/polymer")
 
 ## Example
 
-`polymer()` takes the layers, as anything the 'wk' package can read:
-'sf' data frames, `wk::wkb()` or `wk::wkt()` vectors and so on.
+`polymer()` takes the layers, as anything the ‘wk’ package can read:
+‘sf’ data frames, `wk::wkb()` or `wk::wkt()` vectors and so on.
 
 ``` r
 library(polymer)
@@ -96,7 +97,7 @@ plot(wk::wk_bbox(A), border = NA)
 wk::wk_plot(pieces$geometry, col = hcl.colors(nrow(pieces)), add = TRUE)
 ```
 
-<img src="man/figures/README-fuse-1.png" width="100%" />
+<img src="man/figures/README-fuse-1.png" alt="" width="100%" />
 
 `layer_n()` keeps the pieces covered at least `n` times.
 
@@ -106,10 +107,10 @@ wk::wk_plot(layer_n(pool, 2)$geometry, col = "grey", add = TRUE)
 wk::wk_plot(layer_n(pool, 3)$geometry, col = "dodgerblue", add = TRUE)
 ```
 
-<img src="man/figures/README-layer-n-1.png" width="100%" />
+<img src="man/figures/README-layer-n-1.png" alt="" width="100%" />
 
-Geometry comes back as `wk::wkb()` with the inputs' coordinate reference
-system, and converts to 'sf' with `sf::st_as_sf()`.
+Geometry comes back as `wk::wkb()` with the inputs’ coordinate reference
+system, and converts to ‘sf’ with `sf::st_as_sf()`.
 
 ``` r
 soil_field <- polymer(soil, field)
@@ -118,7 +119,7 @@ plot(sf::st_geometry(soil), col = hcl.colors(nrow(soil), "Pastel 1"))
 plot(sf::st_geometry(x), col = "firebrick", add = TRUE)
 ```
 
-<img src="man/figures/README-soil-field-1.png" width="100%" />
+<img src="man/figures/README-soil-field-1.png" alt="" width="100%" />
 
 ## Why a mesh
 
@@ -135,8 +136,8 @@ On 100 overlapping buffered lines in one layer (the example from [issue
 `sf::st_intersection()` takes tens of seconds and its pieces overlap
 each other by a small amount.
 
-The mesh itself is a 'wkpool' triangle pool on a shared vertex table,
-and the triangulation comes from 'cdtr'. Vertices are shared on exact
+The mesh itself is a ‘wkpool’ triangle pool on a shared vertex table,
+and the triangulation comes from ‘cdtr’. Vertices are shared on exact
 coordinate equality; crossings are computed in double precision.
 
 ## Background

@@ -20,3 +20,5 @@ interface.
   tidyverse packages are no longer dependencies; 'sf' is in Suggests. The
   `%>%` re-export is removed.
 * The `soil` and `field` data now carry a current 'sf' crs object.
+
+* Now use wk and geos for input handling, and output of `layer_n()`. 

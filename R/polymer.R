@@ -1,132 +1,210 @@
-new_polymer <- function(input,
-                        primitives,
-                        geometry_map,
-                        index) {
-  structure(list(input = input,
-                 primitives = primitives,
-                 geometry_map = geometry_map,
-                 index = index), class = "polymer")
-}
-
-
-
-#' Polymer
+#' Build a polymer mesh from polygon layers
 #'
-#' Convert a collection of sf data frame polygon layers to a single pool
-#' of triangles.
+#' Combine one or more polygon layers into a single triangle mesh, where
+#' every input edge from every layer is kept as a chain of mesh edges, and
+#' record which input features cover each triangle.
 #'
-#' Each triangle is identified by which path in the inputs it belongs to. None of
-#' this is very useable yet. Holes can be identified but aren't at the moment, any
-#' path that is a hole is identified per triangle.
+#' All the inputs' edges are triangulated together in one constrained
+#' Delaunay triangulation. Where edges from different features cross, the
+#' crossing is inserted as a new vertex, so the mesh is a partition of the
+#' plane that respects every input boundary. Vertices are shared on exact
+#' coordinate equality before triangulation.
 #'
-#' `input` is a list with all input objects
-#' `primitives` is the triangulation object
-#' `geometry_map` is the paths with their row count
-#' `index` is the mapping between triangle and path/s
-#' @param ... sf polygon data frame inputs
+#' Each triangle is then labelled with the features that contain it: a
+#' triangle is inside a feature when its centroid is inside an odd number of
+#' the feature's rings, so holes are subtracted. Triangles covered by no
+#' feature (gaps enclosed by the inputs) are dropped.
 #'
-#' @return a polymer, see details
+#' The result is the mesh and its index, not a set of polygons. Use
+#' [fuse()] or [layer_n()] to get polygons back.
+#'
+#' @param ... Polygon layers. Each can be anything the 'wk' package can read
+#'   (an 'sf' data frame or `sfc`, a `wk::wkb()` or `wk::wkt()` vector, and
+#'   so on). Data frames keep their non-geometry columns as attributes.
+#' @param engine The triangulation engine. Only `"cdtr"` is available.
+#'
+#' @return A `polymer` object, a list with
+#' * `mesh`: a `wkpool_tri` (see [wkpool::new_wkpool_tri()]) holding the
+#'   triangles on a shared vertex pool. The vertex table has an `origin`
+#'   column: `"input"` for input vertices and `"crossing"` for vertices
+#'   inserted where input edges cross.
+#' * `index`: a data frame with one row per triangle and covering feature:
+#'   `triangle` (row in `mesh`), `layer` (position of the layer in `...`) and
+#'   `feature` (row within that layer).
+#' * `layers`: a list with one data frame of attributes per layer (no
+#'   geometry).
+#' * `crs`: the coordinate reference system shared by the inputs.
+#'
 #' @export
-#' @importFrom rlang .data
 #' @examples
-#' polymer(A, B, C)
-polymer <- function(...) {
-  ## combine each layer
+#' pool <- polymer(A, B, C)
+#' pool
+#' head(pool$index)
+#'
+#' ## the mesh is a 'wkpool' triangle pool
+#' pool$mesh
+polymer <- function(..., engine = "cdtr") {
+  engine <- match.arg(engine)
   inputs <- list(...)
-  inputs0 <- lapply(seq_along(inputs),
-                    function(x) sf::st_sf(layer = rep(x, length(inputs[[x]][[1]])), geometry = sf::st_geometry(inputs[[x]])))
-  #  mesh_pool <- silicate::SC(do.call(rbind, inputs0))
+  if (length(inputs) < 1L) stop("polymer() needs at least one layer")
 
-  ## TODO1
-  ## triangulate the mesh
-  sfall <- do.call(rbind, inputs0)
-  path <- silicate::PATH0(sfall)
-  RTri <- pfft_edge_RTriangle(path)
+  geoms <- lapply(inputs, layer_geometry)
+  crs <- common_crs(geoms)
+  n_each <- vapply(geoms, function(g) length(wk::as_wkb(g)), integer(1))
+  geom_all <- do.call(c, lapply(geoms, function(g) {
+    wk::wk_set_crs(wk::wk_drop_m(wk::wk_drop_z(wk::as_wkb(g))), NULL)
+  }))
+  check_polygonal(geom_all)
 
-  ## TODO2
-  ## identify all points by overlap with inputs
-  map <- pfft_path_triangle_map(path, RTri)
+  ## feature ids across all layers, and the layer each belongs to
+  feature_layer <- rep(seq_along(inputs), n_each)
+  feature_row <- sequence(n_each)
 
-  ## TODO3
-  ## sort out common CRS for inputs
+  ## vertex pool on the exact rung: shared on identical coordinates
+  pool <- wkpool::merge_coincident(wkpool::establish_topology(geom_all))
+  v <- wkpool::pool_vertices(pool)
+  s <- wkpool::pool_segments(pool)
+  s <- s[s$.vx0 != s$.vx1, , drop = FALSE]
+  if (nrow(s) < 3L) stop("the inputs have no polygon edges")
+  lo <- pmin(s$.vx0, s$.vx1)
+  hi <- pmax(s$.vx0, s$.vx1)
+  s <- s[!duplicated(cbind(lo, hi)), , drop = FALSE]
 
-  index <-   map #%>% dplyr::mutate(path_ = match(.data$path_, path$path$path_))
+  tri <- cdtr::cdt_triangulate(v$x, v$y,
+                               match(s$.vx0, v$.vx), match(s$.vx1, v$.vx),
+                               erase = "outer")
 
-  paths <- gibble::gibble(path)%>%
-    dplyr::transmute(.data$subobject,
-                     object_ = .data$object,
-                     ncoords_ = .data$nrow,
-                     path = dplyr::row_number())
+  ## label every triangle by the features containing its centroid
+  TT <- tri$T
+  cx <- (tri$P[TT[, 1L], 1L] + tri$P[TT[, 2L], 1L] + tri$P[TT[, 3L], 1L]) / 3
+  cy <- (tri$P[TT[, 1L], 2L] + tri$P[TT[, 2L], 2L] + tri$P[TT[, 3L], 2L]) / 3
+  hits <- label_triangles(cx, cy, wk::wk_coords(geom_all))
 
-  layers <- unlist(lapply(seq_along(inputs), function(a) rep(a, nrow(inputs[[a]]))))
-  paths$layer <- layers[paths$object_]
-  new_polymer(input = inputs0,
-              primitives = RTri,
-              geometry_map = paths,
-              index = index)
+  ## keep only triangles inside at least one feature
+  keep <- sort(unique(hits$triangle))
+  TT <- TT[keep, , drop = FALSE]
+  hits$triangle <- match(hits$triangle, keep)
+  hits <- hits[order(hits$triangle, hits$feature), , drop = FALSE]
+
+  vertices <- data.frame(.vx = seq_len(nrow(tri$P)),
+                         x = tri$P[, 1L], y = tri$P[, 2L],
+                         origin = as.character(tri$origin))
+  mesh <- wkpool::new_wkpool_tri(vertices, TT[, 1L], TT[, 2L], TT[, 3L],
+                                 crs = crs)
+
+  index <- data.frame(triangle = hits$triangle,
+                      layer = feature_layer[hits$feature],
+                      feature = feature_row[hits$feature])
+  rownames(index) <- NULL
+
+  new_polymer(mesh = mesh, index = index,
+              layers = mapply(layer_attributes, inputs, n_each, SIMPLIFY = FALSE),
+              crs = crs)
 }
 
-#' Print polymer
-#'
-#' Print a short description of the polymer contents.
-#' @param x polymer
-#' @param ... ignored
-#'
-#' @return x invisibly
-#' @export
-#'
-#' @examples
-#' polymer(A, B, C)
-print.polymer <- function(x, ...) {
-  cat("polymer mesh:\n")
-  cat(sprintf("Layers:    %i\n", length(x$input)))
-  cat(sprintf("Polygons:  %i\n", sum(unlist(lapply(x$input, nrow)))))
-  cat(sprintf("Triangles: %i\n", length(unique(x$index$triangle_idx))))
-  cat(sprintf("(Overlaps: %i)\n", sum(table(x$index$triangle_idx) > 1)))
+new_polymer <- function(mesh, index, layers, crs) {
+  structure(list(mesh = mesh, index = index, layers = layers, crs = crs),
+            class = "polymer")
+}
+
+## the geometry column of a data frame, or the input itself
+layer_geometry <- function(x) {
+  if (is.data.frame(x)) {
+    is_geom <- vapply(x, wk::is_handleable, logical(1))
+    if (!any(is_geom)) stop("a data frame layer has no geometry column")
+    return(x[[which(is_geom)[1L]]])
+  }
+  if (!wk::is_handleable(x)) {
+    stop("each layer must be a geometry vector or a data frame with a geometry column")
+  }
+  x
+}
+
+## the non-geometry columns of a data frame as a plain data frame
+layer_attributes <- function(x, n) {
+  if (!is.data.frame(x)) return(data.frame(row.names = seq_len(n)))
+  cols <- as.list(x)
+  cols <- cols[!vapply(cols, wk::is_handleable, logical(1))]
+  structure(cols, class = "data.frame", row.names = seq_len(n))
+}
+
+common_crs <- function(geoms) {
+  crs <- lapply(geoms, wk::wk_crs)
+  for (i in seq_along(crs)[-1L]) {
+    if (!wk::wk_crs_equal(crs[[1L]], crs[[i]])) {
+      stop("all layers must have the same coordinate reference system")
+    }
+  }
+  crs[[1L]]
+}
+
+check_polygonal <- function(x) {
+  type <- wk::wk_meta(x)$geometry_type
+  ## 3 polygon, 6 multipolygon; empty or missing features carry no edges
+  bad <- !is.na(type) & !type %in% c(3L, 6L)
+  if (any(bad)) stop("polymer() needs polygon or multipolygon geometry")
   invisible(x)
 }
 
-#' Plot polymer
+#' Print a polymer
 #'
-#' The default plot shows only the mesh. If `show_intersection = TRUE`, the part
-#' of the mesh that has 2 intersecting regions or more is contrasted to the rest.
-#' @param x polymer
-#' @param ... arguments to [polypath]
-#' @param show_intersection logical, plot the intersection region contrasted to the pool (default `FALSE`)
+#' Print a short summary of a polymer mesh: the number of layers, input
+#' features, triangles, crossing vertices and the deepest overlap.
 #'
-#' @return the input, invisibly
+#' @param x A polymer.
+#' @param ... Ignored.
+#'
+#' @return `x`, invisibly.
 #' @export
-#' @importFrom graphics plot polypath
-#' @importFrom utils head
+#'
+#' @examples
+#' print(polymer(A, B, C))
+print.polymer <- function(x, ...) {
+  v <- wkpool::pool_vertices(x$mesh)
+  depth <- tabulate(x$index$triangle, nbins = length(x$mesh))
+  cat("polymer mesh:\n")
+  cat(sprintf("Layers:    %i\n", length(x$layers)))
+  cat(sprintf("Features:  %i\n", sum(vapply(x$layers, nrow, integer(1)))))
+  cat(sprintf("Triangles: %i\n", length(x$mesh)))
+  cat(sprintf("Vertices:  %i (%i at crossings)\n", nrow(v), sum(v$origin == "crossing")))
+  cat(sprintf("Overlaps:  %i triangles covered more than once, at most %i deep\n",
+              sum(depth > 1L), max(c(0L, depth))))
+  invisible(x)
+}
+
+#' Plot a polymer
+#'
+#' Draw the triangles of the mesh. With `show_intersection = TRUE` the
+#' triangles covered by two or more input features are filled.
+#'
+#' @param x A polymer.
+#' @param ... Arguments passed to [graphics::polygon()], such as `col` and
+#'   `border`.
+#' @param show_intersection Logical, fill the triangles covered more than
+#'   once (default `FALSE`).
+#'
+#' @return `x`, invisibly.
+#' @export
+#' @importFrom graphics plot polygon
 #' @examples
 #' plot(polymer(A, B, C))
-#' library(sf)
-#' example(st_read)
-#' nc <- nc[1:5, ]
-#' x <- polymer(nc, st_jitter(nc, amount = 0.1))
-#' plot(x)
+#' plot(polymer(A, B, C), show_intersection = TRUE, col = "firebrick")
 plot.polymer <- function(x, ..., show_intersection = FALSE) {
-
+  v <- wkpool::pool_vertices(x$mesh)
+  t <- wkpool::pool_triangles(x$mesh)
+  graphics::plot(range(v$x), range(v$y), type = "n", asp = 1,
+                 xlab = "", ylab = "", axes = FALSE)
+  ring_xy <- function(t) {
+    idx <- as.vector(rbind(t$.vx0, t$.vx1, t$.vx2, NA))
+    idx <- match(idx, v$.vx)
+    list(x = v$x[idx], y = v$y[idx])
+  }
   if (show_intersection) {
-    plot(x, border = "grey", asp = 1, xlab = "", ylab = "")
-
-    sb_intersection(x, ...)
+    graphics::polygon(ring_xy(t), border = "grey", col = NA)
+    depth <- tabulate(x$index$triangle, nbins = nrow(t))
+    graphics::polygon(ring_xy(t[depth > 1L, , drop = FALSE]), ...)
   } else {
-    plot(x$primitives$P, pch = ".", asp = 1, xlab = "", ylab = "", axes = FALSE)
-    polypath(head(x$primitives$P[t(cbind(x$primitives$T, x$primitives$T[,1], NA)), ], -1), ...)
-
+    graphics::polygon(ring_xy(t), ...)
   }
   invisible(x)
-}
-## needs to be in silicate
-get_projection.sfc <- function(x, ...) attr(x, "crs")[["proj4string"]]
-get_projection.sf <- function(x, ...) attr(sf::st_geometry(x), "crs")[["proj4string"]]
-
-sb_intersection <- function(x, ...) {
-  index <- x$index %>%
-    dplyr::group_by(.data$triangle_idx) %>%
-    dplyr::filter(dplyr::n() > 1) %>% dplyr::ungroup()
-  #index$layer <- x$geometry_map$layer[match(index$path_, x$geometry_map$path)]
-  triangles <- x$primitives$T[index$triangle_idx, ]
-  polypath(head(x$primitives$P[t(cbind(triangles, NA)), ], -1L), ...)
 }

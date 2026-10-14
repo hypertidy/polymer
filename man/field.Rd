@@ -4,7 +4,21 @@
 \name{field}
 \alias{field}
 \alias{soil}
-\title{data}
+\title{Field and soil polygons}
+\format{
+'sf' data frames in longitude and latitude (WGS84):
+\itemize{
+\item \code{soil}: 12 rows, \code{soil} (character) and \code{geometry}.
+\item \code{field}: 2 rows, \code{field} (character) and \code{geoms}.
+}
+}
 \description{
-Data from online discussion.
+Two polygon layers used to show overlay: \code{soil} has 12 polygons with a
+made-up soil type, \code{field} has two rectangular fields that cross them.
+The example comes from a question on the GIS Stack Exchange
+(\url{https://gis.stackexchange.com/a/230161}), using the Luxembourg
+boundaries shipped with the 'raster' package.
+}
+\examples{
+polymer(soil, field)
 }

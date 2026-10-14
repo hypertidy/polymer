@@ -2,30 +2,57 @@
 % Please edit documentation in R/polymer.R
 \name{polymer}
 \alias{polymer}
-\title{Polymer}
+\title{Build a polymer mesh from polygon layers}
 \usage{
-polymer(...)
+polymer(..., engine = "cdtr")
 }
 \arguments{
-\item{...}{sf polygon data frame inputs}
+\item{...}{Polygon layers. Each can be anything the 'wk' package can read
+(an 'sf' data frame or \code{sfc}, a \code{wk::wkb()} or \code{wk::wkt()} vector, and
+so on). Data frames keep their non-geometry columns as attributes.}
+
+\item{engine}{The triangulation engine. Only \code{"cdtr"} is available.}
 }
 \value{
-a polymer, see details
+A \code{polymer} object, a list with
+\itemize{
+\item \code{mesh}: a \code{wkpool_tri} (see \code{\link[wkpool:new_wkpool_tri]{wkpool::new_wkpool_tri()}}) holding the
+triangles on a shared vertex pool. The vertex table has an \code{origin}
+column: \code{"input"} for input vertices and \code{"crossing"} for vertices
+inserted where input edges cross.
+\item \code{index}: a data frame with one row per triangle and covering feature:
+\code{triangle} (row in \code{mesh}), \code{layer} (position of the layer in \code{...}) and
+\code{feature} (row within that layer).
+\item \code{layers}: a list with one data frame of attributes per layer (no
+geometry).
+\item \code{crs}: the coordinate reference system shared by the inputs.
+}
 }
 \description{
-Convert a collection of sf data frame polygon layers to a single pool
-of triangles.
+Combine one or more polygon layers into a single triangle mesh, where
+every input edge from every layer is kept as a chain of mesh edges, and
+record which input features cover each triangle.
 }
 \details{
-Each triangle is identified by which path in the inputs it belongs to. None of
-this is very useable yet. Holes can be identified but aren't at the moment, any
-path that is a hole is identified per triangle.
+All the inputs' edges are triangulated together in one constrained
+Delaunay triangulation. Where edges from different features cross, the
+crossing is inserted as a new vertex, so the mesh is a partition of the
+plane that respects every input boundary. Vertices are shared on exact
+coordinate equality before triangulation.
 
-\code{input} is a list with all input objects
-\code{primitives} is the triangulation object
-\code{geometry_map} is the paths with their row count
-\code{index} is the mapping between triangle and path/s
+Each triangle is then labelled with the features that contain it: a
+triangle is inside a feature when its centroid is inside an odd number of
+the feature's rings, so holes are subtracted. Triangles covered by no
+feature (gaps enclosed by the inputs) are dropped.
+
+The result is the mesh and its index, not a set of polygons. Use
+\code{\link[=fuse]{fuse()}} or \code{\link[=layer_n]{layer_n()}} to get polygons back.
 }
 \examples{
-polymer(A, B, C)
+pool <- polymer(A, B, C)
+pool
+head(pool$index)
+
+## the mesh is a 'wkpool' triangle pool
+pool$mesh
 }

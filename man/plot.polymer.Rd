@@ -2,29 +2,27 @@
 % Please edit documentation in R/polymer.R
 \name{plot.polymer}
 \alias{plot.polymer}
-\title{Plot polymer}
+\title{Plot a polymer}
 \usage{
 \method{plot}{polymer}(x, ..., show_intersection = FALSE)
 }
 \arguments{
-\item{x}{polymer}
+\item{x}{A polymer.}
 
-\item{...}{arguments to \link{polypath}}
+\item{...}{Arguments passed to \code{\link[graphics:polygon]{graphics::polygon()}}, such as \code{col} and
+\code{border}.}
 
-\item{show_intersection}{logical, plot the intersection region contrasted to the pool (default \code{FALSE})}
+\item{show_intersection}{Logical, fill the triangles covered more than
+once (default \code{FALSE}).}
 }
 \value{
-the input, invisibly
+\code{x}, invisibly.
 }
 \description{
-The default plot shows only the mesh. If \code{show_intersection = TRUE}, the part
-of the mesh that has 2 intersecting regions or more is contrasted to the rest.
+Draw the triangles of the mesh. With \code{show_intersection = TRUE} the
+triangles covered by two or more input features are filled.
 }
 \examples{
 plot(polymer(A, B, C))
-library(sf)
-example(st_read)
-nc <- nc[1:5, ]
-x <- polymer(nc, st_jitter(nc, amount = 0.1))
-plot(x)
+plot(polymer(A, B, C), show_intersection = TRUE, col = "firebrick")
 }

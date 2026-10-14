@@ -3,10 +3,26 @@
 \docType{package}
 \name{polymer-package}
 \alias{polymer-package}
-\title{Polymer}
+\title{polymer: Overlay Any Number of Polygon Layers with a Triangle Mesh}
 \description{
-Find overlapping polygons regions by converting a collection of sf
-data frame polygon layers to a single pool of triangles. The pool
-is used for subsequent queries, what layers intersect and how, maintaining
-links to input data of all layers.
+Overlay polygon layers by building one constrained Delaunay triangulation of every input edge from every layer, with crossings inserted as new vertices, and recording which input features cover each triangle. The mesh and its index answer overlay questions for any number of layers at once: where features overlap, how many times, and which features are involved. Overlay pieces are dissolved from the mesh, so they form an exact partition with shared vertices, unlike pairwise polygon clipping. Input is anything the 'wk' package reads, the vertex pool comes from 'wkpool' and the triangulation from 'cdtr'.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/hypertidy/polymer}
+  \item \url{https://hypertidy.github.io/polymer/}
+  \item Report bugs at \url{https://github.com/hypertidy/polymer/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Michael Sumner \email{mdsumner@gmail.com} (\href{https://orcid.org/0000-0002-2471-7511}{ORCID}) [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Gabriel Becker (Provided the package name.) [contributor]
+}
+
+}
+\keyword{internal}

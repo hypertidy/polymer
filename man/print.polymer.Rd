@@ -2,21 +2,22 @@
 % Please edit documentation in R/polymer.R
 \name{print.polymer}
 \alias{print.polymer}
-\title{Print polymer}
+\title{Print a polymer}
 \usage{
 \method{print}{polymer}(x, ...)
 }
 \arguments{
-\item{x}{polymer}
+\item{x}{A polymer.}
 
-\item{...}{ignored}
+\item{...}{Ignored.}
 }
 \value{
-x invisibly
+\code{x}, invisibly.
 }
 \description{
-Print a short description of the polymer contents.
+Print a short summary of a polymer mesh: the number of layers, input
+features, triangles, crossing vertices and the deepest overlap.
 }
 \examples{
-polymer(A, B, C)
+print(polymer(A, B, C))
 }

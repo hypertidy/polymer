@@ -10,3 +10,7 @@
 ^CODE_OF_CONDUCT\.md$
 ^tic\.R$
 ^\.github$
+^cran-comments\.md$
+^LICENSE\.md$
+^_pkgdown\.yml$
+^pkgdown$

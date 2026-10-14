@@ -6,8 +6,20 @@
 \alias{A}
 \alias{B}
 \alias{C}
-\title{Simple data examples}
+\title{Simple overlapping layers}
+\format{
+'sf' data frames with no coordinate reference system:
+\itemize{
+\item \code{A}: 4 rows, \code{layer}, \code{a} and \code{geometry}.
+\item \code{B}: 1 row, \code{b} and \code{geometry}.
+\item \code{C}: 1 row, \code{c} and \code{geometry}.
+}
+}
 \description{
-A, B, C are three partially overlaying polygon layers with
-different sets of attributes.
+\code{A}, \code{B} and \code{C} are three partially overlapping polygon layers with
+different attributes: \code{A} is four squares in a 2 by 2 grid over the unit square, \code{B} is a
+single triangle and \code{C} a single thin rectangle.
+}
+\examples{
+polymer(A, B, C)
 }

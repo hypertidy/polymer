@@ -1,7 +1,13 @@
 # Two sf requests as polymer workflows
 
-Status: design notes. The accompanying code, `sf-issues-prep.R`, has not been
-run; every claim below about results is a hypothesis to confirm with it.
+Status: confirmed 2026-10-25 and written up as the vignette
+`vignettes/identity-nary.Rmd`. Running `sf-issues-prep.R` as written fails its
+first check: `soil` and `field` are longitude and latitude, so `st_area()`
+measures geodesic edges while polymer splits edges as straight lines (feature
+10 differs by about 1e-6). With both layers projected first (EPSG:3035), every
+check holds to about 1e-12. The vignette does the attribute bookkeeping from
+`pool$layers` rather than `sf::st_drop_geometry()`, needs no 'dplyr', and
+converts to 'sf' once at the end.
 
 ## r-spatial/sf#1959: Esri Identity
 

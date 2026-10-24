@@ -1,0 +1,296 @@
+---
+title: "Identity and n-ary overlay with polymer"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Identity and n-ary overlay with polymer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4.5,
+  eval = requireNamespace("sf", quietly = TRUE)
+)
+```
+
+Two long-standing requests on the 'sf' issue tracker ask for overlays that
+pairwise clipping handles awkwardly:
+
+* [r-spatial/sf#1959](https://github.com/r-spatial/sf/issues/1959) asks for
+  an equivalent of the Esri *Identity* overlay: split the polygons of one
+  layer by the boundaries of another and keep the attributes of both.
+* [r-spatial/sf#2242](https://github.com/r-spatial/sf/issues/2242) asks for
+  a faster and more robust n-ary intersection of a single layer: every piece
+  of the plane with the number of polygons covering it, and which ones.
+
+polymer answers both with the same two steps. `polymer()` puts every edge of
+every input into one triangulation and records which features cover each
+triangle, and `fuse()` dissolves the triangles into one piece per distinct
+set of covering features. The rest is bookkeeping on the `origins` of each
+piece.
+
+This vignette also sets out where 'sf' and where 'wk' belong in such a
+workflow. In short: prepare the inputs with 'sf', hand the 'sf' objects to
+`polymer()` as they are, do the bookkeeping on polymer's own tables, and
+convert back to 'sf' once, at the end.
+
+```{r packages}
+library(polymer)
+```
+
+## Where conversion to wk belongs
+
+polymer reads anything the 'wk' package can handle, 'sf' data frames
+included, and converts the geometry to well-known binary itself. Converting
+an 'sf' layer with `wk::as_wkb()` before calling `polymer()` gains nothing:
+the conversion takes a fraction of a millisecond for the example layers
+here, and passing the 'sf' data frame lets polymer keep its attribute
+columns and check that all layers share a coordinate reference system.
+
+What matters is what has to happen *before* the geometry leaves 'sf', because
+'wk' cannot do it:
+
+1. **Project to a planar CRS.** polymer works in the plane. Edges are
+   straight lines in the input coordinates and crossings are computed in
+   those coordinates. With longitude and latitude the result is a valid
+   planar overlay in degrees, but 'sf' measures the same polygons with
+   geodesic edges (via 's2', or 'lwgeom' when 's2' is off), so areas and
+   comparisons no longer line up. Use `sf::st_transform()` first.
+2. **Repair and select.** Use `sf::st_make_valid()` if the input needs it,
+   and drop attribute columns you do not want carried through.
+
+After `polymer()`, everything needed for the overlay is already in plain R
+structures: the layer attributes in `pool$layers`, the covering features of
+each piece in `pieces$origins`, and the triangles in `pool$mesh`. There is no
+reason to go back to 'sf' in the middle, for example to drop geometry with
+`sf::st_drop_geometry()` or to measure areas. Pieces stay as `wk::wkb()`
+until the end, where one call to `sf::st_as_sf()` gives an 'sf' data frame
+for plotting, writing or comparison.
+
+The example layers `soil` and `field` are in longitude and latitude, so they
+are projected first, here to the European equal-area projection.
+
+```{r project}
+soil_p <- sf::st_transform(soil, 3035)
+field_p <- sf::st_transform(field, 3035)
+```
+
+## Identity (sf#1959)
+
+Identity keeps every part of the input layer `x`, split along the boundaries
+of the identity layer `y`, with the attributes of both. Parts of `x` outside
+`y` get missing values for `y`'s attributes, and parts of `y` outside `x` are
+dropped.
+
+With polymer that is a filter on the origins of each piece: keep the pieces
+with a layer-1 origin, and look up the attributes of the layer-1 and layer-2
+features listed there in `pool$layers`.
+
+```{r identity-fun}
+identity_pieces <- function(pool, pieces) {
+  map <- do.call(rbind, lapply(seq_len(nrow(pieces)), function(i) {
+    o <- pieces$origins[[i]]
+    fx <- o$feature[o$layer == 1L]
+    fy <- o$feature[o$layer == 2L]
+    if (!length(fx)) return(NULL)        # only in y: dropped
+    if (!length(fy)) fy <- NA_integer_   # only in x: y attributes missing
+    expand.grid(piece = i, x = fx, y = fy)
+  }))
+  out <- data.frame(pool$layers[[1L]][map$x, , drop = FALSE],
+                    pool$layers[[2L]][map$y, , drop = FALSE])
+  rownames(out) <- NULL
+  out$geometry <- pieces$geometry[map$piece]
+  out
+}
+```
+
+The function only touches polymer's tables, so it needs neither 'sf' nor
+'wk' beyond indexing a `wk::wkb()` vector.
+
+```{r identity}
+pool <- polymer(soil_p, field_p)
+pool
+ident <- identity_pieces(pool, fuse(pool))
+head(ident)
+```
+
+Now convert, once.
+
+```{r identity-sf}
+ident <- sf::st_as_sf(ident)
+plot(ident["field"], main = "soil split by field")
+```
+
+### Checking against the pairwise workaround
+
+The workaround in the issue intersects the layers, takes the difference of
+`x` and the union of `y`, and binds the two. Written with base `rbind()`:
+
+```{r pairwise}
+pairwise_identity <- function(x, y) {
+  x <- sf::st_set_agr(x, "constant")
+  y <- sf::st_set_agr(y, "constant")
+  inter <- sf::st_intersection(x, y)
+  rest <- sf::st_difference(x, sf::st_union(y))
+  rest[setdiff(names(y), attr(y, "sf_column"))] <- NA
+  rest <- sf::st_set_geometry(rest, attr(inter, "sf_column"))
+  rbind(inter, rest)
+}
+base <- pairwise_identity(soil_p, field_p)
+c(polymer = nrow(ident), pairwise = nrow(base))
+```
+
+Both give the same pieces. Total area per combination of soil and field
+values agrees to rounding:
+
+```{r pairwise-check}
+key <- function(d) paste(d$soil, d$field)
+a_poly <- tapply(as.numeric(sf::st_area(ident)), key(ident), sum)
+a_pair <- tapply(as.numeric(sf::st_area(base)), key(base), sum)
+range(a_poly / a_pair[names(a_poly)] - 1)
+```
+
+### Checking with the mesh alone
+
+The mesh can check itself, with no polygon geometry at all. Each triangle's
+area comes from its three vertices, and `pool$index` says which features
+cover it, so the area of every input feature is a sum over its triangles.
+
+```{r tri-area}
+tri_area <- function(pool) {
+  v <- wkpool::pool_vertices(pool$mesh)
+  t <- wkpool::pool_triangles(pool$mesh)
+  i <- match(t$.vx0, v$.vx)
+  j <- match(t$.vx1, v$.vx)
+  k <- match(t$.vx2, v$.vx)
+  ((v$x[j] - v$x[i]) * (v$y[k] - v$y[i]) -
+     (v$x[k] - v$x[i]) * (v$y[j] - v$y[i])) / 2
+}
+ta <- tri_area(pool)
+idx <- pool$index
+by_feature <- tapply(ta[idx$triangle], list(idx$layer, idx$feature), sum)
+range(by_feature[1L, ] / as.numeric(sf::st_area(soil_p)) - 1)
+```
+
+The triangles reproduce every soil polygon's area, so splitting by `field`
+lost nothing.
+
+### A point to settle
+
+`expand.grid()` above gives one row for each pair of covering `x` and `y`
+features. When features within a layer overlap each other, a piece is
+covered by several features of one layer, and it is repeated once per pair.
+The Esri documentation does not describe this case, and whether to repeat,
+aggregate or reject such pieces is a choice for the caller. The soil and
+field layers have no internal overlaps, so it does not arise here.
+
+## n-ary intersection of one layer (sf#2242)
+
+For a single layer, `fuse(polymer(x))` is the n-ary intersection: one piece
+per distinct set of covering features, with the count in `n` and the
+features in `origins`. The example is overlapping discs, with one disc
+duplicated, because the loop posted in the issue stops on duplicate
+geometries.
+
+```{r discs}
+make_discs <- function(n, seed = 1) {
+  set.seed(seed)
+  pts <- sf::st_as_sf(data.frame(x = runif(n, 0, 100), y = runif(n, 0, 100),
+                                 id = seq_len(n)),
+                      coords = c("x", "y"))
+  sf::st_buffer(pts, dist = runif(n, 5, 15), nQuadSegs = 12)
+}
+discs <- make_discs(60)
+discs <- rbind(discs, discs[1, ])
+
+pool <- polymer(discs)
+pool
+pieces <- fuse(pool)
+table(pieces$n)
+```
+
+The duplicate needs no special handling: discs 1 and 61 cover the same
+triangles, so they appear together in the origins of every piece inside
+disc 1.
+
+```{r duplicate}
+has_both <- vapply(pieces$origins,
+                   function(o) all(c(1, 61) %in% o$feature), logical(1))
+pieces$origins[[which(has_both)[1L]]]
+```
+
+The input `id` column is in `pool$layers`, so mapping origins to ids is again
+plain indexing. Then convert once and plot the overlap count.
+
+```{r nary-sf}
+pieces$ids <- lapply(pieces$origins, function(o) pool$layers[[1L]]$id[o$feature])
+nary <- sf::st_as_sf(pieces[c("n", "ids", "geometry")])
+plot(nary["n"], main = "overlap count")
+```
+
+### Checking against st_intersection()
+
+`sf::st_intersection()` on one layer computes the same partition. It returns
+one row per piece, and can include points, lines and collections where
+boundaries touch, while polymer returns one MULTIPOLYGON per covering set,
+so rows do not compare directly. Area per overlap count does:
+
+```{r nary-check}
+sf_nary <- sf::st_intersection(discs)
+types <- table(sf::st_geometry_type(sf_nary))
+types[types > 0]
+
+a_poly <- as.numeric(sf::st_area(nary))
+rbind(polymer = tapply(a_poly, nary$n, sum),
+      sf = tapply(as.numeric(sf::st_area(sf_nary)), sf_nary$n.overlaps, sum))
+```
+
+Because the pieces partition the covered area, two more identities hold:
+area weighted by overlap count equals the summed area of the discs, and
+plain area equals the area of their union.
+
+```{r nary-identities}
+c(sum(nary$n * a_poly) / sum(as.numeric(sf::st_area(discs))),
+  sum(a_poly) / as.numeric(sf::st_area(sf::st_union(discs)))) - 1
+```
+
+### Timing
+
+The reason for the issue is speed. The timings below were recorded once
+(on a Linux cloud machine, GEOS 3.12.1) rather than run when the vignette is
+built, because the 'sf' call becomes slow as the number of discs grows.
+
+```{r timing, eval = FALSE}
+for (k in c(50, 100, 200)) {
+  p <- make_discs(k, seed = k)
+  t_mesh <- system.time(pool <- polymer(p))[["elapsed"]]
+  t_fuse <- system.time(fuse(pool))[["elapsed"]]
+  t_sf <- system.time(r <- sf::st_intersection(p))[["elapsed"]]
+  cat(k, t_mesh, t_mesh + t_fuse, t_sf, nrow(r), nrow(fuse(pool)), "\n")
+}
+```
+
+| discs | `polymer()` (s) | `polymer()` + `fuse()` (s) | `st_intersection()` (s) | sf rows | polymer pieces |
+|------:|----------------:|---------------------------:|------------------------:|--------:|---------------:|
+|    50 |            0.04 |                       0.18 |                    0.07 |     222 |            201 |
+|   100 |            0.06 |                       0.43 |                    1.38 |    1611 |           1059 |
+|   200 |            0.24 |                       1.32 |                   71.99 |   19199 |           4467 |
+
+For small inputs the two are comparable, and for the Identity example above
+the pairwise 'sf' route is faster. As overlaps multiply, the cost of
+pairwise clipping grows much faster than the cost of one triangulation.
+Most of polymer's time is in `fuse()`, which rebuilds polygons from the
+mesh; the mesh and its index alone, enough for counts and areas, are
+cheaper still.
+
+## Precision
+
+Crossings are computed in double precision, and vertices are shared on exact
+coordinate equality. The pieces form a partition by construction, so they
+cannot overlap or leave gaps between each other, but the position of each
+crossing carries ordinary floating-point rounding. polymer does not use
+exact arithmetic.

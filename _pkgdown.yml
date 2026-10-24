@@ -21,7 +21,7 @@ navbar:
     alt: polymer
     href: index.html
   structure:
-    left: [intro, reference]
+    left: [intro, reference, articles]
     right: [search, github]
   components:
     intro:
@@ -52,3 +52,8 @@ reference:
     contents:
       - ABC
       - field
+
+articles:
+  - title: Workflows
+    contents:
+      - identity-nary

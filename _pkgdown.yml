@@ -1,0 +1,54 @@
+url: https://hypertidy.github.io/polymer/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  bslib:
+    primary: "#5142A5"
+    secondary: "#4C7280"
+    success: "#1A8A78"
+    info: "#287D9B"
+    warning: "#C88324"
+    danger: "#C65359"
+    body-bg: "#FFFFFF"
+    body-color: "#263442"
+    headings-color: "#25334A"
+  assets: pkgdown
+
+navbar:
+  logo:
+    src: pkgdown/logo.svg
+    alt: polymer
+    href: index.html
+  structure:
+    left: [intro, reference]
+    right: [search, github]
+  components:
+    intro:
+      text: Overview
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/hypertidy/polymer
+
+home:
+  title: polymer
+  description: Polygon overlays, built on one shared triangle mesh
+  strip_header: false
+
+reference:
+  - title: Build an overlay
+    contents:
+      - polymer
+  - title: Explore and extract
+    contents:
+      - fuse
+      - layer_n
+      - plot.polymer
+  - title: Example data
+    contents:
+      - ABC
+      - field

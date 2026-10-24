@@ -1,16 +1,18 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/CODE_OF_CONDUCT.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/news/index.html</loc></url>
-<url><loc>/reference/ABC.html</loc></url>
-<url><loc>/reference/field.html</loc></url>
-<url><loc>/reference/fuse.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/plot.polymer.html</loc></url>
-<url><loc>/reference/polymer-package.html</loc></url>
-<url><loc>/reference/polymer.html</loc></url>
-<url><loc>/reference/print.polymer.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/404.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/articles/identity-nary.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/articles/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/authors.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/news/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/ABC.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/field.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/fuse.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/plot.polymer.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/polymer-package.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/polymer.html</loc></url>
+<url><loc>https://hypertidy.github.io/polymer/reference/print.polymer.html</loc></url>
 </urlset>
 

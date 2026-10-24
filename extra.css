@@ -1,0 +1,74 @@
+:root {
+  --polymer-accent: #e57c59;
+  --polymer-ink: #25334a;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.navbar {
+  box-shadow: 0 2px 14px rgb(37 51 74 / 8%);
+}
+
+.navbar-brand {
+  color: var(--polymer-ink);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.navbar-brand img {
+  max-height: 2rem;
+  margin-right: 0.5rem;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+
+.page-header h1 {
+  color: var(--polymer-ink);
+}
+
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+a:hover {
+  color: var(--polymer-accent);
+}
+
+.btn-primary {
+  box-shadow: 0 4px 12px rgb(81 66 165 / 18%);
+}
+
+pre,
+.sourceCode {
+  border: 1px solid #e5e9f0;
+  border-radius: 0.65rem;
+}
+
+.contents h2,
+.contents h3 {
+  color: var(--polymer-ink);
+}
+
+/* Palette alternatives to preview by swapping the bslib colors in _pkgdown.yml:
+   lagoon: primary #176B73, secondary #4D7772, accent #D98356
+   berry:  primary #75446F, secondary #75647E, accent #D98272
+   slate:  primary #354F6B, secondary #66788A, accent #D49A50
+*/
+
+/* flatly styles navbar links for a dark bar; keep them readable on bg: light */
+.navbar .navbar-nav .nav-link {
+  color: var(--polymer-ink);
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
+  color: #5142a5;
+}

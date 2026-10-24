@@ -62,3 +62,13 @@ pre,
    berry:  primary #75446F, secondary #75647E, accent #D98272
    slate:  primary #354F6B, secondary #66788A, accent #D49A50
 */
+
+/* flatly styles navbar links for a dark bar; keep them readable on bg: light */
+.navbar .navbar-nav .nav-link {
+  color: var(--polymer-ink);
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
+  color: #5142a5;
+}

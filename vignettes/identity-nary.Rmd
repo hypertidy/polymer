@@ -188,6 +188,63 @@ The Esri documentation does not describe this case, and whether to repeat,
 aggregate or reject such pieces is a choice for the caller. The soil and
 field layers have no internal overlaps, so it does not arise here.
 
+## One mesh, the whole overlay family
+
+Identity is one of several two-layer overlays that GIS software offers
+side by side: Intersect, Union, Identity, Erase and Symmetrical Difference.
+Pairwise clipping computes each one separately, from the geometry. With
+polymer they are all filters on the same pieces, decided only by whether a
+piece has a layer-1 origin, a layer-2 origin, or both. The mesh is built
+once.
+
+```{r family}
+pieces <- fuse(pool)
+in_x <- vapply(pieces$origins, function(o) any(o$layer == 1L), logical(1))
+in_y <- vapply(pieces$origins, function(o) any(o$layer == 2L), logical(1))
+keep <- list(
+  intersect = in_x & in_y,
+  union = in_x | in_y,
+  identity = in_x,
+  erase = in_x & !in_y,
+  symdiff = xor(in_x, in_y)
+)
+```
+
+Pieces covered by a field polygon are filled purple, the rest grey.
+
+```{r family-plot, fig.height = 3}
+op <- par(mfrow = c(1, 5), mar = c(0, 0, 1.5, 0), xaxt = "n", yaxt = "n", bty = "n")
+for (nm in names(keep)) {
+  wk::wk_plot(pieces$geometry, border = NA)
+  title(nm)
+  wk::wk_plot(pieces$geometry[keep[[nm]]], add = TRUE,
+              col = c("grey80", "#5142A5")[in_y[keep[[nm]]] + 1L])
+}
+par(op)
+```
+
+Each filter's area agrees with the corresponding 'sf' operation on the
+unioned layers:
+
+```{r family-check}
+area <- as.numeric(sf::st_area(sf::st_as_sfc(pieces$geometry)))
+ux <- sf::st_union(soil_p)
+uy <- sf::st_union(field_p)
+sf_area <- function(g) sum(as.numeric(sf::st_area(g)))
+cbind(polymer = vapply(keep, function(k) sum(area[k]), numeric(1)),
+      sf = c(sf_area(sf::st_intersection(ux, uy)),
+             sf_area(sf::st_union(ux, uy)),
+             sf_area(ux),
+             sf_area(sf::st_difference(ux, uy)),
+             sf_area(sf::st_sym_difference(ux, uy))))
+```
+
+The filters work on any number of layers in the same way. A piece's
+`origins` is the full record of what covers it, so any rule over layers
+and features, such as "in layer 1 and layer 3 but not layer 2", is a
+logical expression on that table rather than a sequence of clipping
+operations.
+
 ## n-ary intersection of one layer (sf#2242)
 
 For a single layer, `fuse(polymer(x))` is the n-ary intersection: one piece

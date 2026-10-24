@@ -5,7 +5,8 @@ interface.
 
 * New vignette "Identity and n-ary overlay with polymer" works through
   r-spatial/sf#1959 (Esri Identity) and r-spatial/sf#2242 (n-ary
-  intersection of one layer), and sets out where 'sf' prepares the inputs
+  intersection of one layer), shows Intersect, Union, Identity, Erase and
+  Symmetrical Difference as filters on one mesh, and sets out where 'sf' prepares the inputs
   and where the workflow stays on polymer's own tables.
 * `polymer()` takes any number of layers as anything 'wk' can read, not only
   'sf' data frames. Vertices are shared on exact coordinate equality with

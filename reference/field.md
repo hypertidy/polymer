@@ -14,6 +14,13 @@ boundaries shipped with the 'raster' package.
 
 - `field`: 2 rows, `field` (character) and `geoms`.
 
+## Source
+
+The `soil` boundaries are the Luxembourg file `lux.shp` from the
+'raster' package, which derives from GADM (<https://gadm.org>). GADM
+data carry their own licence terms, separate from polymer's MIT licence;
+these boundaries may be replaced by a rebuilt layer in a later release.
+
 ## Examples
 
 ``` r

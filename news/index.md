@@ -5,6 +5,9 @@
 polymer is rebuilt on ‘wkpool’ and ‘cdtr’. This release breaks the old
 interface.
 
+- polymer is now MIT licensed (was GPL-3), matching ‘cdtr’ and ‘wk’, so
+  the overlay core can be reused freely.
+
 - New vignette “Identity and n-ary overlay with polymer” works through
   r-spatial/sf#1959 (Esri Identity) and r-spatial/sf#2242 (n-ary
   intersection of one layer), shows Intersect, Union, Identity, Erase

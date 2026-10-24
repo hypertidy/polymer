@@ -11,6 +11,9 @@ interface.
   intersection of one layer), shows Intersect, Union, Identity, Erase and
   Symmetrical Difference as filters on one mesh, and sets out where 'sf' prepares the inputs
   and where the workflow stays on polymer's own tables.
+* New article "Overlay robustness: the history of issue 7" records issue 7
+  from 2020 to 2026, reruns its examples against GEOS 3.12.1 and 3.15.0,
+  and documents where polymer itself still fails.
 * `polymer()` takes any number of layers as anything 'wk' can read, not only
   'sf' data frames. Vertices are shared on exact coordinate equality with
   'wkpool', and all edges are triangulated once with 'cdtr', which inserts

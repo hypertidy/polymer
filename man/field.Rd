@@ -12,6 +12,12 @@
 \item \code{field}: 2 rows, \code{field} (character) and \code{geoms}.
 }
 }
+\source{
+The \code{soil} boundaries are the Luxembourg file \code{lux.shp} from the
+'raster' package, which derives from GADM (\url{https://gadm.org}). GADM data
+carry their own licence terms, separate from polymer's MIT licence; these
+boundaries may be replaced by a rebuilt layer in a later release.
+}
 \description{
 Two polygon layers used to show overlay: \code{soil} has 12 polygons with a
 made-up soil type, \code{field} has two rectangular fields that cross them.

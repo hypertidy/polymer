@@ -12,6 +12,10 @@
 #' @format 'sf' data frames in longitude and latitude (WGS84):
 #' * `soil`: 12 rows, `soil` (character) and `geometry`.
 #' * `field`: 2 rows, `field` (character) and `geoms`.
+#' @source The `soil` boundaries are the Luxembourg file `lux.shp` from the
+#'   'raster' package, which derives from GADM (<https://gadm.org>). GADM data
+#'   carry their own licence terms, separate from polymer's MIT licence; these
+#'   boundaries may be replaced by a rebuilt layer in a later release.
 #' @name field
 #' @docType data
 #' @aliases soil

@@ -15,7 +15,7 @@ Description: Overlay polygon layers by building one constrained Delaunay
     they form an exact partition with shared vertices, unlike pairwise
     polygon clipping. Input is anything the 'wk' package reads, the vertex
     pool comes from 'wkpool' and the triangulation from 'cdtr'.
-License: GPL-3
+License: MIT + file LICENSE
 URL: https://github.com/hypertidy/polymer, https://hypertidy.github.io/polymer/
 BugReports: https://github.com/hypertidy/polymer/issues
 Depends:

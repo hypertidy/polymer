@@ -16,10 +16,7 @@ template:
   assets: pkgdown
 
 navbar:
-  logo:
-    src: pkgdown/logo.svg
-    alt: polymer
-    href: index.html
+  bg: light
   structure:
     left: [intro, reference, articles]
     right: [search, github]
@@ -48,6 +45,7 @@ reference:
       - fuse
       - layer_n
       - plot.polymer
+      - print.polymer
   - title: Example data
     contents:
       - ABC

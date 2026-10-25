@@ -36,7 +36,7 @@ LinkingTo:
 VignetteBuilder: knitr
 Remotes:
     hypertidy/cdtr,
-    hypertidy/wkpool@claude/project-thread-psvfpo
+    hypertidy/wkpool
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US

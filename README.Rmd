@@ -39,7 +39,7 @@ plot(wk::wk_bbox(A), border = NA)
 wk::wk_plot(A, col = hcl.colors(nrow(A), alpha = 0.6), add = TRUE)
 wk::wk_plot(B, col = "#B2222299", add = TRUE)
 wk::wk_plot(C, col = "#1E90FF99", add = TRUE)
-plot(polymer(A, B, C), show_intersection = TRUE, col = "grey60")
+plot(polymer(A, B, C), show_intersection = TRUE, col = "#5142A5B3")
 par(op)
 ```
 

@@ -1,6 +1,7 @@
 :root {
   --polymer-accent: #e57c59;
-  --polymer-ink: #25334a;
+  --polymer-accent-ink: #a8472a;
+  --polymer-ink: #1b2533;
 }
 
 body {
@@ -39,7 +40,7 @@ a {
 }
 
 a:hover {
-  color: var(--polymer-accent);
+  color: var(--polymer-accent-ink);
 }
 
 .btn-primary {
@@ -63,12 +64,26 @@ pre,
    slate:  primary #354F6B, secondary #66788A, accent #D49A50
 */
 
-/* flatly styles navbar links for a dark bar; keep them readable on bg: light */
-.navbar .navbar-nav .nav-link {
-  color: var(--polymer-ink);
+/* navbar is bg: primary (dark purple); keep brand, version and links white */
+.navbar .navbar-brand,
+.navbar .navbar-nav .nav-link,
+.navbar .nav-text,
+.navbar .text-muted {
+  color: #ffffff !important;
 }
 
-.navbar .navbar-nav .nav-link:hover,
-.navbar .navbar-nav .nav-link.active {
-  color: #5142a5;
+.navbar .navbar-nav .nav-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.navbar .navbar-nav .nav-link.active,
+.navbar .navbar-nav .active > .nav-link {
+  background-color: rgb(255 255 255 / 16%) !important;
+  border-radius: 0.4rem;
+}
+
+.navbar-toggler {
+  border-color: rgb(255 255 255 / 60%);
 }

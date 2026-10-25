@@ -11,12 +11,14 @@ template:
     warning: "#C88324"
     danger: "#C65359"
     body-bg: "#FFFFFF"
-    body-color: "#263442"
-    headings-color: "#25334A"
+    body-color: "#1B2533"
+    headings-color: "#1B2533"
+    link-color: "#4535A0"
   assets: pkgdown
 
 navbar:
-  bg: light
+  bg: primary
+  type: dark
   structure:
     left: [intro, reference, articles]
     right: [search, github]

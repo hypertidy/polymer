@@ -262,7 +262,7 @@ way.</p>
 <span><span class="va">t_polymer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">pieces</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fuse.html">fuse</a></span><span class="op">(</span><span class="fu"><a href="../reference/polymer.html">polymer</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>sf_ok <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span>, sf_seconds <span class="op">=</span> <span class="va">t_sf</span>, polymer_seconds <span class="op">=</span> <span class="va">t_polymer</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           sf_ok      sf_seconds polymer_seconds </span></span>
-<span><span class="co">#&gt;           1.000           4.672           0.262</span></span></code></pre></div>
+<span><span class="co">#&gt;           1.000           8.359           0.406</span></span></code></pre></div>
 <p>With GEOS 3.12.1 and 3.15.0 none of these throw. Across ten random
 seeds of the stress test, every <code>st_intersection()</code> call
 succeeded with both versions, taking 8 to 29 seconds per seed against

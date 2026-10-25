@@ -60,6 +60,10 @@ A `polymer` object, a list with
 
 - `crs`: the coordinate reference system shared by the inputs.
 
+- `set_id`: the covering set of each triangle of `mesh`, an integer from
+  1 (in order of first appearance), equal for triangles covered by the
+  same features. `NULL` when `label = "pip"`.
+
 ## Details
 
 All the inputs' edges are triangulated together in one constrained

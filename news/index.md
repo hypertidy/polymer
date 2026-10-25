@@ -12,9 +12,11 @@
   [`polymer()`](https://hypertidy.github.io/polymer/reference/polymer.md)
   warns when they disagree, which means the noding is broken. Requires
   ‘cdtr’ with `edge_sources` (development version, 0.1.0.9000).
+
 - The labelling core is a dependency-free C++17 header,
   `inst/include/polymer/overlay.hpp` (MIT), usable from other packages
   with `LinkingTo: polymer`. It implements mesh spec v0.2 Annex A.
+
 - New `rule` argument to
   [`polymer()`](https://hypertidy.github.io/polymer/reference/polymer.md):
   `"nonzero"` (the new default), `"evenodd"` (the 0.3.0 behaviour) or
@@ -22,11 +24,21 @@
   holes clockwise, the first ring of each polygon being its shell. Under
   `"nonzero"` a duplicated part stays covered where `"evenodd"`
   cancelled it.
+
 - New `label` argument to
   [`polymer()`](https://hypertidy.github.io/polymer/reference/polymer.md):
   `"pip"` keeps the centroid point-in-polygon labelling of 0.3.0 (now
   honouring `rule`) for comparison. It will be removed in a later
   release.
+
+- [`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md)
+  dissolves the mesh with
+  [`wkpool::tri_dissolve()`](https://rdrr.io/pkg/wkpool/man/tri_dissolve.html);
+  the dissolve code moved to ‘wkpool’, so polymer needs wkpool \>=
+  0.4.0.9000 (from GitHub until the next wkpool release). It groups
+  triangles by the labelling’s covering sets, kept on the polymer as
+  `set_id`, instead of building string keys from the index (still done
+  for `label = "pip"`).
 
 ## polymer 0.3.0
 

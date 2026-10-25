@@ -91,6 +91,9 @@ inserted where input edges cross.</p></li>
 <li><p><code>layers</code>: a list with one data frame of attributes per layer (no
 geometry).</p></li>
 <li><p><code>crs</code>: the coordinate reference system shared by the inputs.</p></li>
+<li><p><code>set_id</code>: the covering set of each triangle of <code>mesh</code>, an integer from
+1 (in order of first appearance), equal for triangles covered by the same
+features. <code>NULL</code> when <code>label = "pip"</code>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

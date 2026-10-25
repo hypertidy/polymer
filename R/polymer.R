@@ -200,7 +200,7 @@ plot.polymer <- function(x, ..., show_intersection = FALSE) {
     list(x = v$x[idx], y = v$y[idx])
   }
   if (show_intersection) {
-    graphics::polygon(ring_xy(t), border = "grey", col = NA)
+    graphics::polygon(ring_xy(t), border = "grey45", col = NA)
     depth <- tabulate(x$index$triangle, nbins = nrow(t))
     graphics::polygon(ring_xy(t[depth > 1L, , drop = FALSE]), ...)
   } else {

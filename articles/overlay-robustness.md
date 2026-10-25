@@ -173,7 +173,7 @@ t_sf <- system.time(r <- nary_sf(x))[["elapsed"]]
 t_polymer <- system.time(pieces <- fuse(polymer(x)))[["elapsed"]]
 c(sf_ok = is.data.frame(r), sf_seconds = t_sf, polymer_seconds = t_polymer)
 #>           sf_ok      sf_seconds polymer_seconds 
-#>           1.000           4.580           0.243
+#>           1.000           8.362           0.439
 ```
 
 With GEOS 3.12.1 and 3.15.0 none of these throw. Across ten random seeds
@@ -324,8 +324,7 @@ x500 <- stress(2, n = 1000)
 pool <- polymer(x500)
 res <- try(fuse(pool), silent = TRUE)
 if (inherits(res, "try-error")) cat(res) else nrow(res)
-#> Error in poly[h] <- cand[which.min(abs(area[cand]))] : 
-#>   replacement has length zero
+#> [1] 124328
 ```
 
 Here the mesh holds a triangle whose three vertices are collinear in

@@ -8,6 +8,12 @@ interface.
 - polymer is now MIT licensed (was GPL-3), matching ‘cdtr’ and ‘wk’, so
   the overlay core can be reused freely.
 
+- [`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md) no
+  longer fails when a piece is very small relative to the size of its
+  coordinates. Ring areas, used to tell outer rings from holes, are now
+  computed relative to each ring’s first vertex
+  ([\#18](https://github.com/hypertidy/polymer/issues/18)).
+
 - New vignette “Identity and n-ary overlay with polymer” works through
   r-spatial/sf#1959 (Esri Identity) and r-spatial/sf#2242 (n-ary
   intersection of one layer), shows Intersect, Union, Identity, Erase

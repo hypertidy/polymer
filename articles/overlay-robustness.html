@@ -262,7 +262,7 @@ way.</p>
 <span><span class="va">t_polymer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">pieces</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fuse.html">fuse</a></span><span class="op">(</span><span class="fu"><a href="../reference/polymer.html">polymer</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>sf_ok <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span>, sf_seconds <span class="op">=</span> <span class="va">t_sf</span>, polymer_seconds <span class="op">=</span> <span class="va">t_polymer</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           sf_ok      sf_seconds polymer_seconds </span></span>
-<span><span class="co">#&gt;           1.000           4.580           0.243</span></span></code></pre></div>
+<span><span class="co">#&gt;           1.000           8.362           0.439</span></span></code></pre></div>
 <p>With GEOS 3.12.1 and 3.15.0 none of these throw. Across ten random
 seeds of the stress test, every <code>st_intersection()</code> call
 succeeded with both versions, taking 8 to 29 seconds per seed against
@@ -460,8 +460,7 @@ seed in ten built a mesh but failed in <code><a href="../reference/fuse.html">fu
 <span><span class="va">pool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/polymer.html">polymer</a></span><span class="op">(</span><span class="va">x500</span><span class="op">)</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="../reference/fuse.html">fuse</a></span><span class="op">(</span><span class="va">pool</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"try-error"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in poly[h] &lt;- cand[which.min(abs(area[cand]))] : </span></span>
-<span><span class="co">#&gt;   replacement has length zero</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 124328</span></span></code></pre></div>
 <p>Here the mesh holds a triangle whose three vertices are collinear in
 double precision. Its area is exactly zero, so <code><a href="../reference/fuse.html">fuse()</a></code>
 cannot tell whether its boundary is an outer ring or a hole. A guard for

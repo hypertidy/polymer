@@ -4,14 +4,27 @@
 \alias{polymer}
 \title{Build a polymer mesh from polygon layers}
 \usage{
-polymer(..., engine = "cdtr")
+polymer(
+  ...,
+  rule = c("nonzero", "evenodd", "positive"),
+  engine = "cdtr",
+  label = c("mesh", "pip")
+)
 }
 \arguments{
 \item{...}{Polygon layers. Each can be anything the 'wk' package can read
 (an 'sf' data frame or \code{sfc}, a \code{wk::wkb()} or \code{wk::wkt()} vector, and
 so on). Data frames keep their non-geometry columns as attributes.}
 
+\item{rule}{The fill rule: \code{"nonzero"} (the default), \code{"evenodd"} or
+\code{"positive"}.}
+
 \item{engine}{The triangulation engine. Only \code{"cdtr"} is available.}
+
+\item{label}{How triangles are labelled: \code{"mesh"} (the default) propagates
+winding numbers over the mesh, \code{"pip"} tests each triangle's centroid
+against every ring, as polymer 0.3.0 did. \code{"pip"} is kept for
+comparison and will be removed.}
 }
 \value{
 A \code{polymer} object, a list with
@@ -40,10 +53,18 @@ crossing is inserted as a new vertex, so the mesh is a partition of the
 plane that respects every input boundary. Vertices are shared on exact
 coordinate equality before triangulation.
 
-Each triangle is then labelled with the features that contain it: a
-triangle is inside a feature when its centroid is inside an odd number of
-the feature's rings, so holes are subtracted. Triangles covered by no
-feature (gaps enclosed by the inputs) are dropped.
+Each triangle is then labelled with the features that cover it. The
+winding number of every feature is propagated across the mesh from the
+outside: stepping over a mesh edge adds or subtracts one for each input
+edge lying on it, by its direction. This uses no coordinates, so a sliver
+triangle cannot be mislabelled, and edges not on the walk are checked for
+agreement, which detects broken noding (a warning is given). Shells are
+oriented counter-clockwise and holes clockwise first, the first ring of
+each polygon being its shell, so holes are subtracted. The fill rule then
+decides which windings count as covered: \code{"nonzero"} (any non-zero
+winding, so a duplicated part stays covered), \code{"evenodd"} (odd winding, so
+a duplicated part cancels, as in polymer 0.3.0) or \code{"positive"}.
+Triangles covered by no feature (gaps enclosed by the inputs) are dropped.
 
 The result is the mesh and its index, not a set of polygons. Use
 \code{\link[=fuse]{fuse()}} or \code{\link[=layer_n]{layer_n()}} to get polygons back.

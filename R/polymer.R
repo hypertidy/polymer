@@ -10,10 +10,18 @@
 #' plane that respects every input boundary. Vertices are shared on exact
 #' coordinate equality before triangulation.
 #'
-#' Each triangle is then labelled with the features that contain it: a
-#' triangle is inside a feature when its centroid is inside an odd number of
-#' the feature's rings, so holes are subtracted. Triangles covered by no
-#' feature (gaps enclosed by the inputs) are dropped.
+#' Each triangle is then labelled with the features that cover it. The
+#' winding number of every feature is propagated across the mesh from the
+#' outside: stepping over a mesh edge adds or subtracts one for each input
+#' edge lying on it, by its direction. This uses no coordinates, so a sliver
+#' triangle cannot be mislabelled, and edges not on the walk are checked for
+#' agreement, which detects broken noding (a warning is given). Shells are
+#' oriented counter-clockwise and holes clockwise first, the first ring of
+#' each polygon being its shell, so holes are subtracted. The fill rule then
+#' decides which windings count as covered: `"nonzero"` (any non-zero
+#' winding, so a duplicated part stays covered), `"evenodd"` (odd winding, so
+#' a duplicated part cancels, as in polymer 0.3.0) or `"positive"`.
+#' Triangles covered by no feature (gaps enclosed by the inputs) are dropped.
 #'
 #' The result is the mesh and its index, not a set of polygons. Use
 #' [fuse()] or [layer_n()] to get polygons back.
@@ -21,7 +29,13 @@
 #' @param ... Polygon layers. Each can be anything the 'wk' package can read
 #'   (an 'sf' data frame or `sfc`, a `wk::wkb()` or `wk::wkt()` vector, and
 #'   so on). Data frames keep their non-geometry columns as attributes.
+#' @param rule The fill rule: `"nonzero"` (the default), `"evenodd"` or
+#'   `"positive"`.
 #' @param engine The triangulation engine. Only `"cdtr"` is available.
+#' @param label How triangles are labelled: `"mesh"` (the default) propagates
+#'   winding numbers over the mesh, `"pip"` tests each triangle's centroid
+#'   against every ring, as polymer 0.3.0 did. `"pip"` is kept for
+#'   comparison and will be removed.
 #'
 #' @return A `polymer` object, a list with
 #' * `mesh`: a `wkpool_tri` (see [wkpool::new_wkpool_tri()]) holding the
@@ -43,8 +57,11 @@
 #'
 #' ## the mesh is a 'wkpool' triangle pool
 #' pool$mesh
-polymer <- function(..., engine = "cdtr") {
+polymer <- function(..., rule = c("nonzero", "evenodd", "positive"),
+                    engine = "cdtr", label = c("mesh", "pip")) {
+  rule <- match.arg(rule)
   engine <- match.arg(engine)
+  label <- match.arg(label)
   inputs <- list(...)
   if (length(inputs) < 1L) stop("polymer() needs at least one layer")
 
@@ -64,21 +81,40 @@ polymer <- function(..., engine = "cdtr") {
   pool <- wkpool::merge_coincident(wkpool::establish_topology(geom_all))
   v <- wkpool::pool_vertices(pool)
   s <- wkpool::pool_segments(pool)
-  s <- s[s$.vx0 != s$.vx1, , drop = FALSE]
-  if (nrow(s) < 3L) stop("the inputs have no polygon edges")
-  lo <- pmin(s$.vx0, s$.vx1)
-  hi <- pmax(s$.vx0, s$.vx1)
-  s <- s[!duplicated(cbind(lo, hi)), , drop = FALSE]
 
-  tri <- cdtr::cdt_triangulate(v$x, v$y,
-                               match(s$.vx0, v$.vx), match(s$.vx1, v$.vx),
-                               erase = "outer")
+  ## ring roles from the inputs: the first ring of each part is its shell.
+  ## Rings are reoriented, shells counter-clockwise and holes clockwise, so
+  ## winding counts shells up and holes down whatever the input order.
+  rings <- ring_table(wk::wk_coords(geom_all))
+  if (nrow(rings) != length(unique(s$.path)) || any(s$.path > nrow(rings))) {
+    stop("could not match the vertex pool's rings to the input rings")
+  }
+  flip <- rings$sign[s$.path] < 0
+  s0 <- ifelse(flip, s$.vx1, s$.vx0)
+  s1 <- ifelse(flip, s$.vx0, s$.vx1)
+  keep_s <- s0 != s1
+  s0 <- s0[keep_s]
+  s1 <- s1[keep_s]
+  s_feature <- s$.feature[keep_s]
+  if (length(s0) < 3L) stop("the inputs have no polygon edges")
 
-  ## label every triangle by the features containing its centroid
+  tri <- cdtr::cdt_triangulate(v$x, v$y, match(s0, v$.vx), match(s1, v$.vx),
+                               erase = "outer", edge_sources = label == "mesh")
+
   TT <- tri$T
-  cx <- (tri$P[TT[, 1L], 1L] + tri$P[TT[, 2L], 1L] + tri$P[TT[, 3L], 1L]) / 3
-  cy <- (tri$P[TT[, 1L], 2L] + tri$P[TT[, 2L], 2L] + tri$P[TT[, 3L], 2L]) / 3
-  hits <- label_triangles(cx, cy, wk::wk_coords(geom_all))
+  if (label == "mesh") {
+    lab <- label_mesh(tri, s_feature, rule)
+    if (lab$inconsistent_edges > 0) {
+      warning(sprintf("labelling found %i inconsistent mesh edges: the noding is broken and labels may be wrong",
+                      as.integer(lab$inconsistent_edges)), call. = FALSE)
+    }
+    hits <- lab$hits
+  } else {
+    ## centroid of each triangle against every ring
+    cx <- (tri$P[TT[, 1L], 1L] + tri$P[TT[, 2L], 1L] + tri$P[TT[, 3L], 1L]) / 3
+    cy <- (tri$P[TT[, 1L], 2L] + tri$P[TT[, 2L], 2L] + tri$P[TT[, 3L], 2L]) / 3
+    hits <- label_triangles(cx, cy, wk::wk_coords(geom_all), rings, rule)
+  }
 
   ## keep only triangles inside at least one feature
   keep <- sort(unique(hits$triangle))

@@ -1,6 +1,9 @@
 #' @keywords internal
 "_PACKAGE"
 
+#' @useDynLib polymer, .registration = TRUE
+NULL
+
 #' Field and soil polygons
 #'
 #' Two polygon layers used to show overlay: `soil` has 12 polygons with a

@@ -18,5 +18,6 @@ DESCRIPTION is removed before submission.
 
 There is no published reference for the method as a whole. It combines a
 constrained Delaunay triangulation of all input edges (provided by 'cdtr')
-with point-in-polygon labelling of the triangles; both are standard
+with labelling of the triangles by winding numbers propagated across the
+mesh (point-in-polygon labelling is kept as an option); both are standard
 computational geometry.

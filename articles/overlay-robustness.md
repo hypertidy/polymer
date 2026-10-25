@@ -173,7 +173,7 @@ t_sf <- system.time(r <- nary_sf(x))[["elapsed"]]
 t_polymer <- system.time(pieces <- fuse(polymer(x)))[["elapsed"]]
 c(sf_ok = is.data.frame(r), sf_seconds = t_sf, polymer_seconds = t_polymer)
 #>           sf_ok      sf_seconds polymer_seconds 
-#>           1.000           8.362           0.439
+#>           1.000           8.369           0.450
 ```
 
 With GEOS 3.12.1 and 3.15.0 none of these throw. Across ten random seeds
@@ -295,8 +295,9 @@ polymer pieces gave no hits with either version.
 
 ## Where polymer still fails
 
-polymer is on rung 3 as well, and the failures show up in the same
-places.
+polymer is on rung 3 as well, and has failures of its own: one in the
+triangulation, and one in the arithmetic that turns the mesh back into
+polygons.
 
 **Near-coincident input.** The ‘sf’ pieces above are many thin slivers
 with almost-shared edges. Overlaying them again with polymer stops in
@@ -314,26 +315,47 @@ if (inherits(res, "try-error")) cat(res) else res
 CDT computed a crossing of two nearly parallel constraint edges, the
 rounded point fell outside where it must be, and CDT refused it.
 
-**Degenerate triangles.** At 500 buffered segments, one seed in ten
-built a mesh but failed in
-[`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md):
+**Tiny rings in
+[`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md).** At
+500 buffered segments, one seed in ten built a mesh but failed in
+[`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md). The
+mesh is sound: every triangle has positive area, computed from
+coordinate differences.
 
 ``` r
 
 x500 <- stress(2, n = 1000)
 pool <- polymer(x500)
+v <- wkpool::pool_vertices(pool$mesh)
+t <- wkpool::pool_triangles(pool$mesh)
+i <- match(t$.vx0, v$.vx)
+j <- match(t$.vx1, v$.vx)
+k <- match(t$.vx2, v$.vx)
+tri <- ((v$x[j] - v$x[i]) * (v$y[k] - v$y[i]) -
+          (v$x[k] - v$x[i]) * (v$y[j] - v$y[i])) / 2
+c(triangles = length(tri), not_positive = sum(tri <= 0), smallest = min(tri))
+#>    triangles not_positive     smallest 
+#> 2.550860e+05 0.000000e+00 1.413135e-13
 res <- try(fuse(pool), silent = TRUE)
 if (inherits(res, "try-error")) cat(res) else nrow(res)
 #> [1] 124328
 ```
 
-Here the mesh holds a triangle whose three vertices are collinear in
-double precision. Its area is exactly zero, so
-[`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md) cannot
-tell whether its boundary is an outer ring or a hole. A guard for
-zero-area triangles would let
+The failure is in how
 [`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md)
-continue, but the triangle is a symptom of rung 3, not the cause.
+decides whether a dissolved ring is an outer ring or a hole: by the sign
+of its area, from a shoelace sum over absolute coordinates. The rounding
+error of that sum grows with the size of the coordinates (here about
+1e-13), and one piece of this overlay is a single triangle of area
+1.4e-13. Its area came out exactly zero, so it was taken for a hole with
+no outer ring. Translating each ring to its own first vertex before the
+sum gives the correct area and fixes all ten seeds, as reported in
+[issue 18](https://github.com/hypertidy/polymer/issues/18). If the chunk
+above shows a piece count rather than an error, that fix is in.
+
+This is the problem of issue 7 again, in miniature: a decision (inside
+or outside, outer or hole) made from the sign of a quantity computed in
+double precision.
 
 ## Where things stand
 
@@ -345,11 +367,13 @@ continue, but the triangle is a symptom of rung 3, not the cause.
   rechecked against newer versions as they appear.
 - **polymer.** One triangulation of all edges is much faster on these
   inputs and gives an exact partition of whatever mesh it builds. The
-  mesh itself still depends on double-precision crossings, and fails on
-  near-coincident or near-collinear input.
+  mesh itself still depends on double-precision crossings and fails on
+  near-coincident input, and
+  [`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md) has
+  a rounding fault of its own in telling outer rings from holes (issue
+  18).
 - **Next.** The plan recorded in the issue is to move polymer’s
   triangulation to rung 4: build the mesh with exact crossings (as in
   `lari_cdt(exact = TRUE)`), classify triangles by layer and feature
   exactly as now, and round to doubles only for output. The 100-segment
-  stress test, the sliver re-overlay and the degenerate triangle above
-  are the test cases.
+  stress test and the sliver re-overlay above are the test cases.

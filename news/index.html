@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">polymer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,13 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="polymer-development-version">polymer (development version)<a class="anchor" aria-label="anchor" href="#polymer-development-version"></a></h2>
+<ul><li>Triangles are now labelled by propagating each feature’s winding number across the mesh, using the <code>edge_sources</code> table from ‘cdtr’ (which input segments lie on each mesh edge, and which way they run). This uses no coordinates, so sliver triangles can no longer be mislabelled, and it is about ten times faster than testing centroids against every ring. Edges not on the walk are checked for agreement, and <code><a href="../reference/polymer.html">polymer()</a></code> warns when they disagree, which means the noding is broken. Requires ‘cdtr’ with <code>edge_sources</code> (development version, 0.1.0.9000).</li>
+<li>The labelling core is a dependency-free C++17 header, <code>inst/include/polymer/overlay.hpp</code> (MIT), usable from other packages with <code>LinkingTo: polymer</code>. It implements mesh spec v0.2 Annex A.</li>
+<li>New <code>rule</code> argument to <code><a href="../reference/polymer.html">polymer()</a></code>: <code>"nonzero"</code> (the new default), <code>"evenodd"</code> (the 0.3.0 behaviour) or <code>"positive"</code>. Rings are oriented first, shells counter-clockwise and holes clockwise, the first ring of each polygon being its shell. Under <code>"nonzero"</code> a duplicated part stays covered where <code>"evenodd"</code> cancelled it.</li>
+<li>New <code>label</code> argument to <code><a href="../reference/polymer.html">polymer()</a></code>: <code>"pip"</code> keeps the centroid point-in-polygon labelling of 0.3.0 (now honouring <code>rule</code>) for comparison. It will be removed in a later release.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="polymer-030">polymer 0.3.0<a class="anchor" aria-label="anchor" href="#polymer-030"></a></h2>
 <p>polymer is rebuilt on ‘wkpool’ and ‘cdtr’. This release breaks the old interface.</p>
 <ul><li><p>polymer is now MIT licensed (was GPL-3), matching ‘cdtr’ and ‘wk’, so the overlay core can be reused freely.</p></li>
@@ -48,7 +55,8 @@
 <li><p>The <code>soil</code> and <code>field</code> data now carry a current ‘sf’ crs object.</p></li>
 <li><p>Now use wk and geos for input handling, and output of <code><a href="../reference/fuse.html">layer_n()</a></code>.</p></li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

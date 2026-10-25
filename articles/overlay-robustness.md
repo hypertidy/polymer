@@ -173,7 +173,7 @@ t_sf <- system.time(r <- nary_sf(x))[["elapsed"]]
 t_polymer <- system.time(pieces <- fuse(polymer(x)))[["elapsed"]]
 c(sf_ok = is.data.frame(r), sf_seconds = t_sf, polymer_seconds = t_polymer)
 #>           sf_ok      sf_seconds polymer_seconds 
-#>           1.000           8.373           0.457
+#>           1.000           4.672           0.262
 ```
 
 With GEOS 3.12.1 and 3.15.0 none of these throw. Across ten random seeds

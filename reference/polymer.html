@@ -11,7 +11,7 @@ record which input features cover each triangle."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">polymer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,12 @@ record which input features cover each triangle.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">polymer</span><span class="op">(</span><span class="va">...</span>, engine <span class="op">=</span> <span class="st">"cdtr"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">polymer</span><span class="op">(</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nonzero"</span>, <span class="st">"evenodd"</span>, <span class="st">"positive"</span><span class="op">)</span>,</span>
+<span>  engine <span class="op">=</span> <span class="st">"cdtr"</span>,</span>
+<span>  label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mesh"</span>, <span class="st">"pip"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -58,8 +63,20 @@ record which input features cover each triangle.</p>
 so on). Data frames keep their non-geometry columns as attributes.</p></dd>
 
 
+<dt id="arg-rule">rule<a class="anchor" aria-label="anchor" href="#arg-rule"></a></dt>
+<dd><p>The fill rule: <code>"nonzero"</code> (the default), <code>"evenodd"</code> or
+<code>"positive"</code>.</p></dd>
+
+
 <dt id="arg-engine">engine<a class="anchor" aria-label="anchor" href="#arg-engine"></a></dt>
 <dd><p>The triangulation engine. Only <code>"cdtr"</code> is available.</p></dd>
+
+
+<dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
+<dd><p>How triangles are labelled: <code>"mesh"</code> (the default) propagates
+winding numbers over the mesh, <code>"pip"</code> tests each triangle's centroid
+against every ring, as polymer 0.3.0 did. <code>"pip"</code> is kept for
+comparison and will be removed.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -82,10 +99,18 @@ Delaunay triangulation. Where edges from different features cross, the
 crossing is inserted as a new vertex, so the mesh is a partition of the
 plane that respects every input boundary. Vertices are shared on exact
 coordinate equality before triangulation.</p>
-<p>Each triangle is then labelled with the features that contain it: a
-triangle is inside a feature when its centroid is inside an odd number of
-the feature's rings, so holes are subtracted. Triangles covered by no
-feature (gaps enclosed by the inputs) are dropped.</p>
+<p>Each triangle is then labelled with the features that cover it. The
+winding number of every feature is propagated across the mesh from the
+outside: stepping over a mesh edge adds or subtracts one for each input
+edge lying on it, by its direction. This uses no coordinates, so a sliver
+triangle cannot be mislabelled, and edges not on the walk are checked for
+agreement, which detects broken noding (a warning is given). Shells are
+oriented counter-clockwise and holes clockwise first, the first ring of
+each polygon being its shell, so holes are subtracted. The fill rule then
+decides which windings count as covered: <code>"nonzero"</code> (any non-zero
+winding, so a duplicated part stays covered), <code>"evenodd"</code> (odd winding, so
+a duplicated part cancels, as in polymer 0.3.0) or <code>"positive"</code>.
+Triangles covered by no feature (gaps enclosed by the inputs) are dropped.</p>
 <p>The result is the mesh and its index, not a set of polygons. Use
 <code><a href="fuse.html">fuse()</a></code> or <code><a href="fuse.html">layer_n()</a></code> to get polygons back.</p>
     </div>

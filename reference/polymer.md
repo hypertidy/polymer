@@ -7,7 +7,12 @@ record which input features cover each triangle.
 ## Usage
 
 ``` r
-polymer(..., engine = "cdtr")
+polymer(
+  ...,
+  rule = c("nonzero", "evenodd", "positive"),
+  engine = "cdtr",
+  label = c("mesh", "pip")
+)
 ```
 
 ## Arguments
@@ -21,9 +26,20 @@ polymer(..., engine = "cdtr")
   vector, and so on). Data frames keep their non-geometry columns as
   attributes.
 
+- rule:
+
+  The fill rule: `"nonzero"` (the default), `"evenodd"` or `"positive"`.
+
 - engine:
 
   The triangulation engine. Only `"cdtr"` is available.
+
+- label:
+
+  How triangles are labelled: `"mesh"` (the default) propagates winding
+  numbers over the mesh, `"pip"` tests each triangle's centroid against
+  every ring, as polymer 0.3.0 did. `"pip"` is kept for comparison and
+  will be removed.
 
 ## Value
 
@@ -52,10 +68,19 @@ crossing is inserted as a new vertex, so the mesh is a partition of the
 plane that respects every input boundary. Vertices are shared on exact
 coordinate equality before triangulation.
 
-Each triangle is then labelled with the features that contain it: a
-triangle is inside a feature when its centroid is inside an odd number
-of the feature's rings, so holes are subtracted. Triangles covered by no
-feature (gaps enclosed by the inputs) are dropped.
+Each triangle is then labelled with the features that cover it. The
+winding number of every feature is propagated across the mesh from the
+outside: stepping over a mesh edge adds or subtracts one for each input
+edge lying on it, by its direction. This uses no coordinates, so a
+sliver triangle cannot be mislabelled, and edges not on the walk are
+checked for agreement, which detects broken noding (a warning is given).
+Shells are oriented counter-clockwise and holes clockwise first, the
+first ring of each polygon being its shell, so holes are subtracted. The
+fill rule then decides which windings count as covered: `"nonzero"` (any
+non-zero winding, so a duplicated part stays covered), `"evenodd"` (odd
+winding, so a duplicated part cancels, as in polymer 0.3.0) or
+`"positive"`. Triangles covered by no feature (gaps enclosed by the
+inputs) are dropped.
 
 The result is the mesh and its index, not a set of polygons. Use
 [`fuse()`](https://hypertidy.github.io/polymer/reference/fuse.md) or

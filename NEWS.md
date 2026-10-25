@@ -19,8 +19,6 @@
 * New `label` argument to `polymer()`: `"pip"` keeps the centroid
   point-in-polygon labelling of 0.3.0 (now honouring `rule`) for comparison.
   It will be removed in a later release.
-* Input segments shared by several rings are no longer merged before
-  triangulation, so every ring's edges reach the mesh with their direction.
 
 # polymer 0.3.0
 

@@ -26,13 +26,22 @@ ring_table <- function(coords) {
 
 ## Label triangles by propagating winding numbers over the mesh (the
 ## header inst/include/polymer/overlay.hpp). `tri` is cdt_triangulate()
-## output with edge_sources, `s_feature` the feature of each input segment.
+## output with edge_sources over the distinct segments; `s_feature` is the
+## feature of each input segment, `s_unique` the distinct segment it lies
+## on and `s_same` whether it runs the same way. Each edge_sources row is
+## expanded to every input segment on its distinct segment.
 ## Returns the (triangle, feature) pairs and the self-check count.
-label_mesh <- function(tri, s_feature, rule) {
+label_mesh <- function(tri, s_feature, s_unique, s_same, rule) {
   es <- tri$edge_sources
+  ord <- order(s_unique)
+  n_on <- tabulate(s_unique, nbins = max(s_unique))
+  start <- cumsum(c(0L, n_on))[es$segment]
+  k <- n_on[es$segment]
+  orig <- ord[rep(start, k) + sequence(k)]
+  row <- rep(seq_len(nrow(es)), k)
   lab <- overlay_label_cpp(as.vector(t(tri$T)) - 1L, as.vector(t(tri$S)) - 1L,
-                           es$edge - 1L, s_feature[es$segment] - 1L,
-                           es$forward, rule)
+                           es$edge[row] - 1L, s_feature[orig] - 1L,
+                           es$forward[row] == s_same[orig], rule)
   covered <- which(lab$tri_set >= 0L)
   set <- lab$tri_set[covered] + 1L
   len <- diff(lab$set_offset)

@@ -81,3 +81,14 @@ test_that("the header labels sets densely and checks itself", {
   a$rule <- "odd"
   expect_error(do.call(overlay_label_cpp, a), "unknown fill rule")
 })
+
+test_that("a duplicated feature crossing others triangulates and labels", {
+  sq <- function(x0, y0, d) sprintf("POLYGON ((%s %s, %s %s, %s %s, %s %s, %s %s))",
+                                    x0, y0, x0 + d, y0, x0 + d, y0 + d, x0, y0 + d, x0, y0)
+  g <- wk::wkt(c(sq(0, 0, 2), sq(1, 1, 2), sq(0, 0, 2)))
+  x <- polymer(g)
+  expect_identical(index_keys(x), index_keys(polymer(g, label = "pip")))
+  f <- fuse(x)
+  expect_equal(max(f$n), 3L)
+  expect_partition(x, 12)
+})

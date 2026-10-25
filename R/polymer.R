@@ -98,12 +98,22 @@ polymer <- function(..., rule = c("nonzero", "evenodd", "positive"),
   s_feature <- s$.feature[keep_s]
   if (length(s0) < 3L) stop("the inputs have no polygon edges")
 
-  tri <- cdtr::cdt_triangulate(v$x, v$y, match(s0, v$.vx), match(s1, v$.vx),
+  ## CDT cannot take the same segment twice, so triangulate each distinct
+  ## segment once and keep the map back to every input segment on it, with
+  ## whether it runs the same way
+  lo <- pmin(s0, s1)
+  hi <- pmax(s0, s1)
+  key <- paste(lo, hi)
+  first <- !duplicated(key)
+  s_unique <- match(key, key[first])
+  s_same <- s0 == s0[first][s_unique]
+
+  tri <- cdtr::cdt_triangulate(v$x, v$y, match(s0[first], v$.vx), match(s1[first], v$.vx),
                                erase = "outer", edge_sources = label == "mesh")
 
   TT <- tri$T
   if (label == "mesh") {
-    lab <- label_mesh(tri, s_feature, rule)
+    lab <- label_mesh(tri, s_feature, s_unique, s_same, rule)
     if (lab$inconsistent_edges > 0) {
       warning(sprintf("labelling found %i inconsistent mesh edges: the noding is broken and labels may be wrong",
                       as.integer(lab$inconsistent_edges)), call. = FALSE)

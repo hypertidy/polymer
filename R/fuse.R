@@ -150,7 +150,13 @@ dissolve_triangles <- function(mesh, group, crs = NULL) {
   yr <- v$y[vx]
   nxt_in_ring <- unlist(lapply(split(seq_along(ring), ring),
                                function(i) c(i[-1L], i[1L])), use.names = FALSE)
-  area <- rowsum((xr * yr[nxt_in_ring] - xr[nxt_in_ring] * yr) / 2, ring)[, 1L]
+  ## translate each ring to its first vertex before the shoelace sum: with
+  ## absolute coordinates the rounding error (about |x| |y| 1e-16) can exceed
+  ## the area of a small ring and give it the wrong sign or exactly zero
+  ring_first <- match(ring, ring)
+  xs <- xr - xr[ring_first]
+  ys <- yr - yr[ring_first]
+  area <- rowsum((xs * ys[nxt_in_ring] - xs[nxt_in_ring] * ys) / 2, ring)[, 1L]
   first <- !duplicated(ring)
   ring_comp <- comp[owner[first]]
   ring_group <- group[owner[first]]

@@ -1,3 +1,25 @@
+# polymer (development version)
+
+* Triangles are now labelled by propagating each feature's winding number
+  across the mesh, using the `edge_sources` table from 'cdtr' (which input
+  segments lie on each mesh edge, and which way they run). This uses no
+  coordinates, so sliver triangles can no longer be mislabelled, and it is
+  about ten times faster than testing centroids against every ring. Edges
+  not on the walk are checked for agreement, and `polymer()` warns when they
+  disagree, which means the noding is broken. Requires 'cdtr' with
+  `edge_sources` (development version, 0.1.0.9000).
+* The labelling core is a dependency-free C++17 header,
+  `inst/include/polymer/overlay.hpp` (MIT), usable from other packages with
+  `LinkingTo: polymer`. It implements mesh spec v0.2 Annex A.
+* New `rule` argument to `polymer()`: `"nonzero"` (the new default),
+  `"evenodd"` (the 0.3.0 behaviour) or `"positive"`. Rings are oriented
+  first, shells counter-clockwise and holes clockwise, the first ring of each
+  polygon being its shell. Under `"nonzero"` a duplicated part stays covered
+  where `"evenodd"` cancelled it.
+* New `label` argument to `polymer()`: `"pip"` keeps the centroid
+  point-in-polygon labelling of 0.3.0 (now honouring `rule`) for comparison.
+  It will be removed in a later release.
+
 # polymer 0.3.0
 
 polymer is rebuilt on 'wkpool' and 'cdtr'. This release breaks the old

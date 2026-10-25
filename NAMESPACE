@@ -9,3 +9,4 @@ importFrom(graphics,
   plot,
   polygon
 )
+useDynLib(polymer, .registration = TRUE)

@@ -28,6 +28,10 @@ interface.
 * polymer is now MIT licensed (was GPL-3), matching 'cdtr' and 'wk', so the
   overlay core can be reused freely.
 
+* `fuse()` dissolves the mesh with `wkpool::tri_dissolve()`; the dissolve
+  code moved to 'wkpool', so polymer needs wkpool >= 0.4.0.9000 (from
+  GitHub until the next wkpool release). The output is unchanged.
+
 * `fuse()` no longer fails when a piece is very small relative to the size
   of its coordinates. Ring areas, used to tell outer rings from holes, are
   now computed relative to each ring's first vertex (#18).

@@ -20,6 +20,12 @@
   point-in-polygon labelling of 0.3.0 (now honouring `rule`) for comparison.
   It will be removed in a later release.
 
+* `fuse()` dissolves the mesh with `wkpool::tri_dissolve()`; the dissolve
+  code moved to 'wkpool', so polymer needs wkpool >= 0.4.0.9000 (from
+  GitHub until the next wkpool release). It groups triangles by the
+  labelling's covering sets, kept on the polymer as `set_id`, instead of
+  building string keys from the index (still done for `label = "pip"`).
+
 # polymer 0.3.0
 
 polymer is rebuilt on 'wkpool' and 'cdtr'. This release breaks the old

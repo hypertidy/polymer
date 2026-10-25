@@ -85,3 +85,17 @@ test_that("fuse() keeps tiny pieces far from the origin (#18)", {
               function(r) local_area(r$x, r$y), numeric(1))
   expect_true(all(a > 0))
 })
+
+test_that("fuse() groups by the labelling's set ids like the index does", {
+  for (x in list(polymer(A, B, C), polymer(buffered_lines(2)))) {
+    expect_length(x$set_id, length(x$mesh))
+    expect_false(anyNA(x$set_id))
+    ## the same pieces as grouping from the index (the label = "pip" path)
+    y <- x
+    y$set_id <- NULL
+    expect_identical(fuse(x), fuse(y))
+  }
+  expect_null(polymer(A, B, C, label = "pip")$set_id)
+  f <- fuse(polymer(A, B, C, label = "pip"))
+  expect_equal(nrow(f), 10L)
+})

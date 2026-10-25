@@ -1,7 +1,7 @@
 test_that("polymer builds a mesh and index from several layers", {
   x <- polymer(A, B, C)
   expect_s3_class(x, "polymer")
-  expect_named(x, c("mesh", "index", "layers", "crs"))
+  expect_named(x, c("mesh", "index", "layers", "crs", "set_id"))
   expect_s3_class(x$mesh, "wkpool_tri")
   expect_length(x$layers, 3L)
   expect_named(x$index, c("triangle", "layer", "feature"))

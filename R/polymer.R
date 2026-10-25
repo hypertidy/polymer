@@ -48,6 +48,9 @@
 #' * `layers`: a list with one data frame of attributes per layer (no
 #'   geometry).
 #' * `crs`: the coordinate reference system shared by the inputs.
+#' * `set_id`: the covering set of each triangle of `mesh`, an integer from
+#'   1 (in order of first appearance), equal for triangles covered by the same
+#'   features. `NULL` when `label = "pip"`.
 #'
 #' @export
 #' @examples
@@ -119,11 +122,13 @@ polymer <- function(..., rule = c("nonzero", "evenodd", "positive"),
                       as.integer(lab$inconsistent_edges)), call. = FALSE)
     }
     hits <- lab$hits
+    set_id <- lab$set_id
   } else {
     ## centroid of each triangle against every ring
     cx <- (tri$P[TT[, 1L], 1L] + tri$P[TT[, 2L], 1L] + tri$P[TT[, 3L], 1L]) / 3
     cy <- (tri$P[TT[, 1L], 2L] + tri$P[TT[, 2L], 2L] + tri$P[TT[, 3L], 2L]) / 3
     hits <- label_triangles(cx, cy, wk::wk_coords(geom_all), rings, rule)
+    set_id <- NULL
   }
 
   ## keep only triangles inside at least one feature
@@ -131,6 +136,11 @@ polymer <- function(..., rule = c("nonzero", "evenodd", "positive"),
   TT <- TT[keep, , drop = FALSE]
   hits$triangle <- match(hits$triangle, keep)
   hits <- hits[order(hits$triangle, hits$feature), , drop = FALSE]
+  ## covering set per kept triangle, numbered by first appearance
+  if (!is.null(set_id)) {
+    set_id <- set_id[keep]
+    set_id <- match(set_id, unique(set_id))
+  }
 
   vertices <- data.frame(.vx = seq_len(nrow(tri$P)),
                          x = tri$P[, 1L], y = tri$P[, 2L],
@@ -145,11 +155,12 @@ polymer <- function(..., rule = c("nonzero", "evenodd", "positive"),
 
   new_polymer(mesh = mesh, index = index,
               layers = mapply(layer_attributes, inputs, n_each, SIMPLIFY = FALSE),
-              crs = crs)
+              crs = crs, set_id = set_id)
 }
 
-new_polymer <- function(mesh, index, layers, crs) {
-  structure(list(mesh = mesh, index = index, layers = layers, crs = crs),
+new_polymer <- function(mesh, index, layers, crs, set_id = NULL) {
+  structure(list(mesh = mesh, index = index, layers = layers, crs = crs,
+                 set_id = set_id),
             class = "polymer")
 }
 

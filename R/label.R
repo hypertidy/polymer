@@ -30,7 +30,8 @@ ring_table <- function(coords) {
 ## feature of each input segment, `s_unique` the distinct segment it lies
 ## on and `s_same` whether it runs the same way. Each edge_sources row is
 ## expanded to every input segment on its distinct segment.
-## Returns the (triangle, feature) pairs and the self-check count.
+## Returns the (triangle, feature) pairs, the 1-based set id of every
+## triangle (NA when uncovered) and the self-check count.
 label_mesh <- function(tri, s_feature, s_unique, s_same, rule) {
   es <- tri$edge_sources
   ord <- order(s_unique)
@@ -50,6 +51,7 @@ label_mesh <- function(tri, s_feature, s_unique, s_same, rule) {
   pos <- rep(first, n) + sequence(n)
   list(hits = data.frame(triangle = rep(covered, n),
                          feature = lab$set_feature[pos] + 1L),
+       set_id = ifelse(lab$tri_set >= 0L, lab$tri_set + 1L, NA_integer_),
        inconsistent_edges = lab$inconsistent_edges)
 }
 

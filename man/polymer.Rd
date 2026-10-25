@@ -39,6 +39,9 @@ inserted where input edges cross.
 \item \code{layers}: a list with one data frame of attributes per layer (no
 geometry).
 \item \code{crs}: the coordinate reference system shared by the inputs.
+\item \code{set_id}: the covering set of each triangle of \code{mesh}, an integer from
+1 (in order of first appearance), equal for triangles covered by the same
+features. \code{NULL} when \code{label = "pip"}.
 }
 }
 \description{

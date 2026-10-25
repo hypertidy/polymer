@@ -39,11 +39,15 @@ fuse <- function(x, ...) {
   idx <- x$index
   nt <- length(x$mesh)
 
-  ## one group per distinct set of covering features
-  gid <- idx$layer * (max(idx$feature) + 1) + idx$feature
-  set_key <- vapply(split(gid, factor(idx$triangle, levels = seq_len(nt))),
-                    function(g) paste(g, collapse = " "), character(1))
-  group <- match(set_key, unique(set_key))
+  ## one group per distinct set of covering features: the labelling's set
+  ## ids, or (for label = "pip") sets built from the index
+  group <- x$set_id
+  if (is.null(group)) {
+    gid <- idx$layer * (max(idx$feature) + 1) + idx$feature
+    set_key <- vapply(split(gid, factor(idx$triangle, levels = seq_len(nt))),
+                      function(g) paste(g, collapse = " "), character(1))
+    group <- match(set_key, unique(set_key))
+  }
 
   geometry <- wk::wk_set_crs(wkpool::tri_dissolve(x$mesh, group), x$crs)
 

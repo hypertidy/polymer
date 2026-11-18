@@ -39,7 +39,7 @@ plot(wk::wk_bbox(A), border = NA)
 wk::wk_plot(A, col = hcl.colors(nrow(A), alpha = 0.6), add = TRUE)
 wk::wk_plot(B, col = "#B2222299", add = TRUE)
 wk::wk_plot(C, col = "#1E90FF99", add = TRUE)
-plot(polymer(A, B, C), show_intersection = TRUE, col = "#5142A5B3")
+plot(polymer(A, B, C), show_intersection = TRUE, col = "grey60")
 par(op)
 ```
 
@@ -111,6 +111,14 @@ soil_field <- polymer(soil, field)
 x <- sf::st_as_sf(layer_n(soil_field, 2))
 plot(sf::st_geometry(soil), col = hcl.colors(nrow(soil), "Pastel 1"))
 plot(sf::st_geometry(x), col = "firebrick", add = TRUE)
+```
+
+`relate()` gives the DE-9IM relation of every pair of features that meet,
+across all layers in one pass, read from the mesh's shared vertices and
+triangles without building any polygon. Pairs not listed are disjoint.
+
+```{r relate}
+relate(pool)
 ```
 
 ## Why a mesh

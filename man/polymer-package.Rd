@@ -5,6 +5,8 @@
 \alias{polymer-package}
 \title{polymer: Overlay Any Number of Polygon Layers with a Triangle Mesh}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 Overlay polygon layers by building one constrained Delaunay triangulation of every input edge from every layer, with crossings inserted as new vertices, and recording which input features cover each triangle. The mesh and its index answer overlay questions for any number of layers at once: where features overlap, how many times, and which features are involved. Overlay pieces are dissolved from the mesh, so they form an exact partition with shared vertices, unlike pairwise polygon clipping. Input is anything the 'wk' package reads, the vertex pool comes from 'wkpool' and the triangulation from 'cdtr'.
 }
 \seealso{

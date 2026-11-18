@@ -1,5 +1,13 @@
-# polymer (development version)
+# polymer 0.4.0
 
+* New `relate()` gives the DE-9IM relation of every pair of input features
+  that meet, across any number of layers in one pass, read from the mesh
+  with `wkpool::tri_relate()` (no polygons are built). `cross_layer = FALSE`
+  includes pairs within a layer. Needs wkpool >= 0.5.0.
+* The `soil` example layer is now generated (a jittered 4 by 3 coverage)
+  rather than derived from the Luxembourg boundaries in 'raster', which come
+  from GADM and carry their own licence terms. `field` is unchanged.
+* Requires cdtr >= 0.2.0 and wkpool >= 0.5.0, both on CRAN.
 * Triangles are now labelled by propagating each feature's winding number
   across the mesh, using the `edge_sources` table from 'cdtr' (which input
   segments lie on each mesh edge, and which way they run). This uses no
@@ -7,7 +15,7 @@
   about ten times faster than testing centroids against every ring. Edges
   not on the walk are checked for agreement, and `polymer()` warns when they
   disagree, which means the noding is broken. Requires 'cdtr' with
-  `edge_sources` (development version, 0.1.0.9000).
+  `edge_sources` (0.2.0).
 * The labelling core is a dependency-free C++17 header,
   `inst/include/polymer/overlay.hpp` (MIT), usable from other packages with
   `LinkingTo: polymer`. It implements mesh spec v0.2 Annex A.
@@ -21,8 +29,7 @@
   It will be removed in a later release.
 
 * `fuse()` dissolves the mesh with `wkpool::tri_dissolve()`; the dissolve
-  code moved to 'wkpool', so polymer needs wkpool >= 0.4.0.9000 (from
-  GitHub until the next wkpool release). It groups triangles by the
+  code moved to 'wkpool', so polymer needs wkpool >= 0.5.0. It groups triangles by the
   labelling's covering sets, kept on the polymer as `set_id`, instead of
   building string keys from the index (still done for `label = "pip"`).
 

@@ -46,8 +46,12 @@ reference:
     contents:
       - fuse
       - layer_n
+      - relate
       - plot.polymer
       - print.polymer
+  - title: Use from C++
+    contents:
+      - overlay-header
   - title: Example data
     contents:
       - ABC

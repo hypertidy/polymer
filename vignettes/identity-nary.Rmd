@@ -344,6 +344,46 @@ Most of polymer's time is in `fuse()`, which rebuilds polygons from the
 mesh; the mesh and its index alone, enough for counts and areas, are
 cheaper still.
 
+## Relations between features
+
+The same mesh answers how features relate, for any number of layers at
+once. `relate()` gives the DE-9IM relation (the `ST_Relate()` matrix) of
+every pair of features that meet, read by `wkpool::tri_relate()` from the
+vertices and triangles they share. Pairs not listed are disjoint. Here are
+the three layers of the `A`, `B`, `C` example, related in one pass:
+
+```{r relate, eval = TRUE}
+pool3 <- polymer(A, B, C)
+r <- relate(pool3)
+r
+```
+
+Named predicates are patterns on the string. Features overlap in area when
+the first character is `2`, and touch when it is `F` but they are listed at
+all:
+
+```{r relate-predicates}
+r[substr(r$relate, 1, 1) == "2", c("layer_a", "feature_a", "layer_b", "feature_b")]
+```
+
+Within a layer, `cross_layer = FALSE` also lists neighbours that touch.
+Nothing is clipped to get these, and a pairwise tool gives the same strings
+only if the polygons it is given share their vertices where they meet,
+which is what the one triangulation arranges. With 'geos' the matrices can be
+compared directly:
+
+```{r relate-geos, eval = requireNamespace("geos", quietly = TRUE)}
+feature_geos <- function(pool, layer, feature) {
+  idx <- pool$index
+  group <- rep(NA_integer_, length(pool$mesh))
+  group[idx$triangle[idx$layer == layer & idx$feature == feature]] <- 1L
+  geos::as_geos_geometry(wkpool::tri_dissolve(pool$mesh, group))
+}
+ga <- do.call(c, Map(feature_geos, list(pool3), r$layer_a, r$feature_a))
+gb <- do.call(c, Map(feature_geos, list(pool3), r$layer_b, r$feature_b))
+all(r$relate == geos::geos_relate(ga, gb))
+```
+
 ## Precision
 
 Crossings are computed in double precision, and vertices are shared on exact

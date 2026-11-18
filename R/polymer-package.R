@@ -6,19 +6,16 @@ NULL
 
 #' Field and soil polygons
 #'
-#' Two polygon layers used to show overlay: `soil` has 12 polygons with a
-#' made-up soil type, `field` has two rectangular fields that cross them.
-#' The example comes from a question on the GIS Stack Exchange
-#' (<https://gis.stackexchange.com/a/230161>), using the Luxembourg
-#' boundaries shipped with the 'raster' package.
+#' Two polygon layers used to show overlay: `soil` is a coverage of 12
+#' quadrilaterals (a jittered 4 by 3 grid) with a made-up soil type, and
+#' `field` has two rectangular fields that cross them. The layout follows an
+#' example from a question on the GIS Stack Exchange
+#' (<https://gis.stackexchange.com/a/230161>), but both layers are generated
+#' by `data-raw/field-soil.R`, with no external data.
 #'
 #' @format 'sf' data frames in longitude and latitude (WGS84):
 #' * `soil`: 12 rows, `soil` (character) and `geometry`.
 #' * `field`: 2 rows, `field` (character) and `geoms`.
-#' @source The `soil` boundaries are the Luxembourg file `lux.shp` from the
-#'   'raster' package, which derives from GADM (<https://gadm.org>). GADM data
-#'   carry their own licence terms, separate from polymer's MIT licence; these
-#'   boundaries may be replaced by a rebuilt layer in a later release.
 #' @name field
 #' @docType data
 #' @aliases soil
